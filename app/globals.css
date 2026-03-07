@@ -1,0 +1,125 @@
+@tailwind base;
+
+@custom-variant dark (&:is(.dark *));
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Backgrounds */
+    --background: 0 0% 100%;
+    --foreground: 197 93% 10%;       /* Baltic Blue 900 */
+    /* Cards & Popovers */
+    --card: 0 0% 100%;
+    --card-foreground: 197 93% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 197 93% 10%;
+    /* Primary — Baltic Blue 600 (#078fc5) */
+    --primary: 197 93% 40%;
+    --primary-foreground: 0 0% 100%;
+    /* Secondary — Baltic Blue 50 */
+    --secondary: 197 92% 95%;
+    --secondary-foreground: 197 93% 15%;
+    /* Muted */
+    --muted: 197 92% 95%;
+    --muted-foreground: 197 50% 45%;
+    /* Accent — Teal 50 */
+    --accent: 187 100% 92%;
+    --accent-foreground: 187 97% 20%;
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    /* Borders & Inputs — Baltic Blue 100 */
+    --border: 197 92% 90%;
+    --input: 197 92% 90%;
+    --ring: 197 93% 40%;
+    /* Charts */
+    --chart-1: 197 93% 40%;   /* Baltic Blue 600 */
+    --chart-2: 187 97% 40%;   /* Teal 600      */
+    --chart-3: 174 100% 40%;  /* Verdigris 600 */
+    --chart-4: 167 99% 40%;   /* Mint Leaf 600 */
+    --chart-5: 63 86% 50%;    /* Cream 500     */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Backgrounds — Baltic Blue 950 (#011922) */
+    --background: 197 94% 7%;
+    --foreground: 197 92% 95%;       /* Baltic Blue 50 */
+    /* Cards — Baltic Blue 900 */
+    --card: 197 93% 10%;
+    --card-foreground: 197 92% 95%;
+    --popover: 197 93% 10%;
+    --popover-foreground: 197 92% 95%;
+    /* Primary — Baltic Blue 400 (#3ac2f8) */
+    --primary: 197 93% 60%;
+    --primary-foreground: 197 94% 7%;
+    /* Secondary — Baltic Blue 800 */
+    --secondary: 197 93% 15%;
+    --secondary-foreground: 197 92% 95%;
+    /* Muted */
+    --muted: 197 93% 15%;
+    --muted-foreground: 197 50% 55%;
+    /* Accent — Teal 800 */
+    --accent: 187 97% 20%;
+    --accent-foreground: 187 100% 90%;
+    /* Destructive */
+    --destructive: 0 63% 40%;
+    --destructive-foreground: 0 0% 100%;
+    /* Borders & Inputs — Baltic Blue 800 */
+    --border: 197 93% 15%;
+    --input: 197 93% 15%;
+    --ring: 197 93% 60%;
+    /* Charts */
+    --chart-1: 197 93% 60%;   /* Baltic Blue 400 */
+    --chart-2: 187 97% 50%;   /* Teal 500        */
+    --chart-3: 174 100% 50%;  /* Verdigris 500   */
+    --chart-4: 167 99% 50%;   /* Mint Leaf 500   */
+    --chart-5: 63 86% 60%;    /* Cream 400       */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Sidebar — Light */
+:root {
+  --sidebar: 197 92% 97%;
+  --sidebar-foreground: 197 93% 15%;
+  --sidebar-primary: 197 93% 40%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 197 92% 90%;
+  --sidebar-accent-foreground: 197 93% 20%;
+  --sidebar-border: 197 92% 90%;
+  --sidebar-ring: 197 93% 40%;
+}
+
+/* Sidebar — Dark */
+.dark {
+  --sidebar: 197 93% 10%;
+  --sidebar-foreground: 197 92% 90%;
+  --sidebar-primary: 197 93% 60%;
+  --sidebar-primary-foreground: 197 94% 7%;
+  --sidebar-accent: 197 93% 15%;
+  --sidebar-accent-foreground: 197 92% 90%;
+  --sidebar-border: 197 93% 15%;
+  --sidebar-ring: 197 93% 60%;
+}
+
+@theme inline {
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
