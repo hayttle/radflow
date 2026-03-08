@@ -7,8 +7,6 @@ interface PageProps {
   params: Promise<{ requestId: string; itemId: string }>;
 }
 
-export const dynamic = "force-dynamic";
-
 export default async function EditorPage({ params }: PageProps) {
   const { requestId, itemId } = await params;
 
