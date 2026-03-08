@@ -17,6 +17,7 @@ import { Save, Loader2, Plus, Trash, GripVertical } from "lucide-react";
 import { saveExamTemplate } from "@/app/(protected)/configuracoes/modelos/actions";
 import type { ExamTemplate, Unit } from "@/types/supabase";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { Editor } from "@tiptap/react";
 import {
   Select,
   SelectContent,
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface ModelSheetProps {
   open: boolean;
@@ -45,6 +47,21 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
 
   const [variables, setVariables] = useState<{ name: string; label: string; options: string }[]>([]);
 
+  // Editor instances for external control (variable insertion)
+  const [teqEditor, setTeqEditor] = useState<Editor | null>(null);
+  const [descEditor, setDescEditor] = useState<Editor | null>(null);
+  const [impEditor, setImpEditor] = useState<Editor | null>(null);
+
+  const slugify = (text: string) => {
+    return text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "_")
+      .replace(/^-+|-+$/g, "");
+  };
+
   useEffect(() => {
     if (open) {
       setTitle(template?.title ?? "");
@@ -56,7 +73,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
       
       const parsedVars = (template?.variables as any[])?.map((v) => ({
         ...v,
-        options: Array.isArray(v.options) ? v.options.join(", ") : v.options,
+        options: Array.isArray(v.options) ? v.options.join("; ") : v.options,
       })) ?? [];
       
       setVariables(parsedVars);
@@ -73,8 +90,40 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
 
   const updateVariable = (index: number, field: string, value: string) => {
     const newVars = [...variables];
-    newVars[index] = { ...newVars[index], [field]: value };
+    const updated = { ...newVars[index], [field]: value };
+    // If updating label, auto-update name as slug
+    if (field === "label") {
+      updated.name = slugify(value);
+    }
+    newVars[index] = updated;
     setVariables(newVars);
+  };
+
+  const insertVariable = (editor: Editor | null, varName: string) => {
+    if (editor && varName) {
+      editor.chain().focus().insertContent(`{{${varName}}}`).run();
+    }
+  };
+
+  const VariableChips = ({ onInsert }: { onInsert: (name: string) => void }) => {
+    const validVars = variables.filter(v => v.name.trim() && v.label.trim());
+    if (validVars.length === 0) return null;
+
+    return (
+      <div className="flex flex-wrap gap-1.5 mb-2 bg-muted/30 p-2 rounded-md border border-dashed border-muted-foreground/20">
+        <span className="text-[10px] uppercase font-bold text-muted-foreground w-full mb-1">Inserir Variável:</span>
+        {validVars.map((v) => (
+          <Badge 
+            key={v.name} 
+            variant="secondary" 
+            className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors text-[11px] py-0 h-5"
+            onClick={() => onInsert(v.name)}
+          >
+            {v.label}
+          </Badge>
+        ))}
+      </div>
+    );
   };
 
   async function handleSubmit(e: React.FormEvent) {
@@ -86,10 +135,10 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
     }
 
     const payloadVars = variables.map(v => ({
-      name: v.name.trim(),
+      name: v.name.trim() || slugify(v.label),
       label: v.label.trim(),
-      options: v.options.split(",").map(o => o.trim()).filter(Boolean)
-    })).filter(v => v.name && v.label && v.options.length > 0);
+      options: v.options.split(";").map(o => o.trim()).filter(Boolean)
+    })).filter(v => v.label && v.options.length > 0);
 
     const payload = {
       title,
@@ -178,9 +227,8 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
               </Button>
             </div>
             <p className="text-sm text-muted-foreground">
-              Você pode criar variáveis como {"{{tamanho_lesao}}"} e colocá-las no texto abaixo. 
-              Ao redigir o laudo, o editor perguntará sobre esses valores e substituirá o trecho. 
-              As opções devem ser separadas por vírgula.
+              Crie campos que podem ser preenchidos no momento do laudo.
+              As opções devem ser separadas por ponto-e-virgula (;).
             </p>
 
             {variables.length === 0 ? (
@@ -191,29 +239,20 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
               <div className="space-y-3">
                 {variables.map((v, index) => (
                   <div key={index} className="flex flex-col md:flex-row gap-3 items-start p-3 border rounded-lg bg-card group">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 flex-1">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1">
                       <div className="space-y-1">
-                        <Label className="text-xs">Identificador no texto</Label>
+                        <Label className="text-xs">Variável / Pergunta</Label>
                         <Input 
-                          placeholder="Ex: achados_pulmao" 
-                          value={v.name} 
-                          onChange={(e) => updateVariable(index, "name", e.target.value)} 
-                          className="h-8 text-sm"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs">Rótulo / Pergunta</Label>
-                        <Input 
-                          placeholder="Aspecto do pulmão..." 
+                          placeholder="Ex: Aspecto do pulmão" 
                           value={v.label} 
                           onChange={(e) => updateVariable(index, "label", e.target.value)} 
                           className="h-8 text-sm"
                         />
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs">Opções (separadas por vírgula)</Label>
+                        <Label className="text-xs">Opções (separadas por ponto-e-virgula ;) </Label>
                         <Input 
-                          placeholder="Normal, Múltiplos nódulos, Condensação" 
+                          placeholder="Normal; Múltiplos nódulos; Condensação" 
                           value={v.options} 
                           onChange={(e) => updateVariable(index, "options", e.target.value)} 
                           className="h-8 text-sm"
@@ -241,17 +280,20 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
             
             <div className="space-y-2">
               <Label>Técnica</Label>
-              <RichTextEditor value={technique} onChange={setTechnique} />
+              <VariableChips onInsert={(name) => insertVariable(teqEditor, name)} />
+              <RichTextEditor value={technique} onChange={setTechnique} onReady={setTeqEditor} />
             </div>
 
             <div className="space-y-2">
               <Label>Descrição</Label>
-              <RichTextEditor value={description} onChange={setDescription} />
+              <VariableChips onInsert={(name) => insertVariable(descEditor, name)} />
+              <RichTextEditor value={description} onChange={setDescription} onReady={setDescEditor} />
             </div>
 
             <div className="space-y-2">
               <Label>Impressão Mínima</Label>
-              <RichTextEditor value={impression} onChange={setImpression} />
+              <VariableChips onInsert={(name) => insertVariable(impEditor, name)} />
+              <RichTextEditor value={impression} onChange={setImpression} onReady={setImpEditor} />
             </div>
           </section>
 

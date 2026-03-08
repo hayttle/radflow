@@ -133,9 +133,21 @@ export async function saveExamItem(
     .eq("id", itemId)
     .eq("user_id", user.id);
 
-  if (error) return { error: error.message };
+  if (error) {
+    console.error("Error saving exam item:", error);
+    return { error: error.message };
+  }
+
+  // Mirror the report snapshot to exam_reports table
+  try {
+    await upsertExamReport(itemId, formSnapshot);
+  } catch (err) {
+    console.error("Error mirroring report:", err);
+  }
+
   return { success: true };
 }
+
 
 /** Finalize the exam item, mark as completed. */
 export async function finalizeExamItem(itemId: string, requestId: string) {
@@ -151,6 +163,13 @@ export async function finalizeExamItem(itemId: string, requestId: string) {
     .eq("user_id", user.id);
 
   if (itemErr) return { error: itemErr.message };
+
+  // Mirror the report snapshot to exam_reports table
+  try {
+    await upsertExamReport(itemId);
+  } catch (err) {
+    console.error("Error mirroring report:", err);
+  }
 
   // Check if all items in the request are completed
   const { data: allItems } = await supabase
@@ -172,3 +191,78 @@ export async function finalizeExamItem(itemId: string, requestId: string) {
   revalidatePath("/laudos");
   return { success: true };
 }
+
+// ────── REPORT MIRROR (SNAPSHOT) ──────
+
+/**
+ * Generates the full HTML body for the report from a snapshot.
+ * Falls back to template values if snapshot sections are missing or empty.
+ */
+function generateReportHTML(snapshot: ExamFormSnapshot, template?: { technique?: string | null, description?: string | null, impression?: string | null }) {
+  const sections: string[] = [];
+
+  const technique = snapshot.technique || template?.technique;
+  const description = snapshot.description || template?.description;
+  const impression = snapshot.impression || template?.impression;
+
+  if (technique) {
+    sections.push(`<section><h3>Técnica</h3><div>${technique}</div></section>`);
+  }
+  if (description) {
+    sections.push(`<section><h3>Resultado</h3><div>${description}</div></section>`);
+  }
+  if (impression) {
+    sections.push(`<section><h3>Impressão</h3><div>${impression}</div></section>`);
+  }
+
+  return sections.join("\n\n");
+}
+
+/**
+ * Creates/Updates a standalone snapshot of the report in the exam_reports table.
+ * This mirror is used for future consultations independent of template changes.
+ */
+async function upsertExamReport(itemId: string, providedSnapshot?: ExamFormSnapshot) {
+  const { supabase, user } = await getAuthUser();
+
+  // 1. Fetch full context for the snapshot
+  const { data: item } = await supabase
+    .from("exam_items")
+    .select(`
+      form_snapshot,
+      exam_templates ( title, technique, description, impression ),
+      exam_requests (
+        patient_id,
+        unit_id
+      )
+    `)
+    .eq("id", itemId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!item || !item.exam_requests) return;
+
+  const snapshot = providedSnapshot || (item.form_snapshot as unknown as ExamFormSnapshot);
+  const template = item.exam_templates as any;
+  const request = item.exam_requests as any;
+
+  // Render content with template defaults if snapshot is missing sections
+  const content = generateReportHTML(snapshot, template);
+  const title = template?.title || "LAUDO";
+
+  // 2. Upsert the mirror record
+  await supabase
+    .from("exam_reports")
+    .upsert({
+      exam_item_id: itemId,
+      user_id: user.id,
+      patient_id: request.patient_id,
+      unit_id: request.unit_id,
+      title: title,
+      content: content,
+      updated_at: new Date().toISOString(),
+    }, {
+      onConflict: "exam_item_id"
+    });
+}
+

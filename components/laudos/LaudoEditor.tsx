@@ -15,65 +15,15 @@ import {
 } from "@/components/ui/popover";
 import {
   Bold, Italic, List, Undo2, Redo2,
-  Save, CheckCircle, Printer, ChevronDown, BookOpen,
+  Save, CheckCircle, Printer, BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { VariableExtension } from "./extensions/VariableExtension";
+import { VariableContext } from "./VariableContext";
 
 // ──────────────────────────────────────────────
 // Helpers (unused at runtime but kept for reference)
 // ──────────────────────────────────────────────
-// ──────────────────────────────────────────────
-// Variable Badge Popover
-// ──────────────────────────────────────────────
-function VariableBadge({
-  variable,
-  selected,
-  onSelect,
-}: {
-  variable: TemplateVariable;
-  selected: string | undefined;
-  onSelect: (val: string) => void;
-}) {
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          className={cn(
-            "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium transition-colors cursor-pointer border",
-            selected
-              ? "bg-primary/15 text-primary border-primary/30 hover:bg-primary/25"
-              : "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800"
-          )}
-        >
-          {selected ?? variable.label}
-          <ChevronDown className="h-3 w-3 opacity-60" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-48 p-1" align="start">
-        <p className="text-xs font-semibold text-muted-foreground px-2 pt-1 pb-2">
-          {variable.label}
-        </p>
-        <div className="space-y-0.5">
-          {variable.options.map((opt) => (
-            <button
-              key={opt}
-              onClick={() => onSelect(opt)}
-              className={cn(
-                "w-full text-left text-sm px-2 py-1.5 rounded-md transition-colors",
-                selected === opt
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "hover:bg-muted"
-              )}
-            >
-              {opt}
-            </button>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
-  );
-}
-
 // ──────────────────────────────────────────────
 // Main LaudoEditor
 // ──────────────────────────────────────────────
@@ -132,14 +82,24 @@ export function LaudoEditor({
     impression: template?.impression,
   };
 
-  const getInitialContent = (section: SectionKey) => {
-    const saved = snapshot[section];
-    const templateContent = sectionContent[section];
-    return saved ?? templateContent ?? "";
-  };
+  const getInitialContent = useCallback((section: SectionKey) => {
+    let content = snapshot[section] ?? sectionContent[section] ?? "";
+    
+    // Replace {{variable_name}} with <span data-variable="variable_name"></span>
+    if (content) {
+      content = content.replace(/\{\{([^}]+)\}\}/g, (match, varName) => {
+        return `<span data-variable="${varName.trim()}"></span>`;
+      });
+    }
+
+    return content;
+  }, [snapshot, sectionContent]);
 
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      VariableExtension.configure({}),
+    ],
     content: getInitialContent("description"),
     immediatelyRender: false,
     editorProps: {
@@ -170,6 +130,17 @@ export function LaudoEditor({
     }, 2000);
   }, [editor, itemId, activeSection, selections, snapshot]);
 
+  const handleVariableSelect = useCallback((varName: string, value: string) => {
+    setSelections((prev) => {
+      const next = { ...prev, [varName]: value };
+      return next;
+    });
+    // Use a small timeout to let React batch the state update before triggering the save
+    setTimeout(() => {
+        triggerAutosave();
+    }, 0);
+  }, [triggerAutosave]);
+
   // Auto-save on editor change
   useEffect(() => {
     if (!editor) return;
@@ -178,11 +149,6 @@ export function LaudoEditor({
   }, [editor, triggerAutosave]);
 
 
-  const handleVariableSelect = (varName: string, value: string) => {
-    const next = { ...selections, [varName]: value };
-    setSelections(next);
-    triggerAutosave();
-  };
 
   const handleFinalize = () => {
     startTransition(async () => {
@@ -275,24 +241,12 @@ export function LaudoEditor({
           ))}
         </div>
 
-        {/* Variables row */}
-        {variables.length > 0 && (
-          <div className="shrink-0 px-6 py-2.5 border-b bg-muted/20 flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-medium text-muted-foreground mr-1">Variáveis:</span>
-            {variables.map((v) => (
-              <VariableBadge
-                key={v.name}
-                variable={v}
-                selected={selections[v.name]}
-                onSelect={(val) => handleVariableSelect(v.name, val)}
-              />
-            ))}
-          </div>
-        )}
 
         {/* Editor */}
         <div className="flex-1 overflow-y-auto px-8 py-6">
-          <EditorContent editor={editor} />
+          <VariableContext.Provider value={{ variables, selections, onSelect: handleVariableSelect }}>
+            <EditorContent editor={editor} />
+          </VariableContext.Provider>
         </div>
 
         <div className="shrink-0 border-t bg-background px-4 py-2 flex items-center justify-between">

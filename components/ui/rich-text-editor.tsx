@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import ImageResize from "tiptap-extension-resize-image";
@@ -23,9 +23,10 @@ interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  onReady?: (editor: Editor) => void;
 }
 
-export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, placeholder, onReady }: RichTextEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
@@ -40,6 +41,9 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
+    },
+    onCreate: ({ editor }) => {
+      onReady?.(editor);
     },
     editorProps: {
       attributes: {
