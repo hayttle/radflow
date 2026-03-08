@@ -1,0 +1,6 @@
+app/(protected)/laudos/novo/page.tsx(35,20): error TS2322: Type '{ children: Element[]; className: string; }' is not assignable to type 'IntrinsicAttributes & PageContainerProps'.
+  Property 'className' does not exist on type 'IntrinsicAttributes & PageContainerProps'.
+app/(protected)/laudos/page.tsx(56,6): error TS2741: Property 'title' is missing in type '{ children: (false | Element)[]; }' but required in type 'PageContainerProps'.
+app/(protected)/laudos/page.tsx(96,51): error TS2352: Conversion of type '{ id: any; status: any; date: any; notes: any; created_at: any; patients: { id: any; name: any; cpf: any; }[]; units: { id: any; name: any; }[]; }' to type 'RequestWithRelations' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Types of property 'patients' are incompatible.
+    Type '{ id: any; name: any; cpf: any; }[]' is missing the following properties from type '{ id: string; name: string; cpf: string | null; }': id, name, cpf
