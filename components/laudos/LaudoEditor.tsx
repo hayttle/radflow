@@ -343,26 +343,61 @@ export function LaudoEditor({
               <Redo2 className="h-4 w-4" />
             </Button>
           </div>
-          <div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5 h-8"
-            onClick={async () => {
-              if (!editor) return;
-              const result = await saveExamItem(itemId, {
-                [activeSection]: editor.getHTML(),
-                variable_selections: selections,
-              });
-              if (!result?.error) {
-                setLastSaved(new Date());
-                toast.success("Rascunho salvo!");
-              }
-            }}
-          >
-            <Save className="h-3.5 w-3.5" />
-            Salvar
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 h-8"
+              onClick={() => window.open(`/laudos/${requestId}/${itemId}/imprimir`, "_blank")}
+              title="Abrir versão para impressão em nova guia"
+            >
+              <Printer className="h-3.5 w-3.5" />
+              Imprimir
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="gap-1.5 h-8"
+              onClick={async () => {
+                if (!editor) return;
+                const result = await saveExamItem(itemId, {
+                  technique: activeSection === "technique" ? editor.getHTML() : snapshot.technique,
+                  description: activeSection === "description" ? editor.getHTML() : snapshot.description,
+                  impression: activeSection === "impression" ? editor.getHTML() : snapshot.impression,
+                  variable_selections: selections,
+                });
+                if (!result?.error) {
+                  setLastSaved(new Date());
+                  toast.success("Rascunho salvo!");
+                }
+              }}
+            >
+              <Save className="h-3.5 w-3.5" />
+              Rascunho
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              className="gap-1.5 h-8"
+              onClick={async () => {
+                if (!editor) return;
+                await saveExamItem(itemId, {
+                  technique: activeSection === "technique" ? editor.getHTML() : snapshot.technique,
+                  description: activeSection === "description" ? editor.getHTML() : snapshot.description,
+                  impression: activeSection === "impression" ? editor.getHTML() : snapshot.impression,
+                  variable_selections: selections,
+                });
+                const res = await finalizeExamItem(itemId, requestId);
+                if (!res?.error) {
+                  toast.success("Laudo finalizado com sucesso!");
+                } else {
+                  toast.error("Erro ao finalizar", { description: res.error });
+                }
+              }}
+            >
+              <CheckCircle className="h-3.5 w-3.5" />
+              Finalizar
+            </Button>
           </div>
         </div>
       </div>
