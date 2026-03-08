@@ -22,9 +22,15 @@ import {
   MessageSquareQuote,
   UserCog,
   Activity,
+  LayoutDashboard,
 } from "lucide-react";
 
 const mainNav = [
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
   {
     label: "Laudos",
     href: "/laudos",

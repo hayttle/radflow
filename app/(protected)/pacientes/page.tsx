@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { PageContainer } from "@/components/page-container";
-import { PatientsClient } from "./PatientsClient";
+import { PatientsClient } from "./client";
 
 const PAGE_SIZE = 15;
 

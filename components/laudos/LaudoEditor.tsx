@@ -141,6 +141,7 @@ export function LaudoEditor({
   const editor = useEditor({
     extensions: [StarterKit],
     content: getInitialContent("description"),
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class: "prose prose-sm max-w-none focus:outline-none min-h-[300px] px-1",
