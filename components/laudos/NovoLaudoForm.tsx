@@ -4,7 +4,7 @@ import { useState, useTransition, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnit } from "@/contexts/unit-context";
 import { toast } from "sonner";
-import { createExamRequest, searchPatients, createPatientQuick } from "@/app/(protected)/laudos/actions";
+import { createExamRequest, searchPatients } from "@/app/(protected)/laudos/actions";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Search, UserPlus, Loader2, ChevronRight } from "lucide-react";
+import { Search, UserPlus, Loader2, ChevronRight, User, Pencil } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -29,12 +29,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { PatientSheet } from "@/components/pacientes/PatientSheet";
 
 interface PatientItem {
   id: string;
   name: string;
   cpf: string | null;
   birth_date: string | null;
+  gender?: string | null;
+  phone?: string | null;
+  mother_name?: string | null;
+  notes?: string | null;
 }
 
 interface UnitItem { id: string; name: string }
@@ -43,6 +48,21 @@ interface TemplateItem { id: string; title: string; unit_id: string | null; vari
 interface NovoLaudoFormProps {
   units: UnitItem[];
   templates: TemplateItem[];
+}
+
+function formatDate(iso: string): string {
+  const [y, m, d] = iso.split("T")[0].split("-");
+  return d && m && y ? `${d}/${m}/${y}` : iso;
+}
+
+function formatCpf(cpf: string): string {
+  const digits = cpf.replace(/\D/g, "");
+  if (digits.length !== 11) return cpf;
+  return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
+
+function formatGender(g: string): string {
+  return { M: "Masculino", F: "Feminino", O: "Outro" }[g] ?? g;
 }
 
 export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
@@ -56,7 +76,8 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
   const [patientResults, setPatientResults] = useState<PatientItem[]>([]);
   const [selectedPatient, setSelectedPatient] = useState<PatientItem | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [isCreatingPatient, setIsCreatingPatient] = useState(false);
+  const [patientSheetOpen, setPatientSheetOpen] = useState(false);
+  const [patientToEdit, setPatientToEdit] = useState<PatientItem | null>(null);
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Form values - unidade padrão do contexto (aguarda contexto carregar)
@@ -100,15 +121,34 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
     }, 300);
   }, []);
 
-  const handleCreatePatient = async () => {
-    if (!patientQuery.trim()) return;
-    setIsCreatingPatient(true);
-    const { data, error } = await createPatientQuick(patientQuery.trim());
-    setIsCreatingPatient(false);
-    if (error || !data) { toast.error(error ?? "Erro ao criar paciente"); return; }
-    setSelectedPatient({ id: data.id, name: data.name, cpf: null, birth_date: null });
+  const handleOpenNewPatientSheet = () => {
     setPatientOpen(false);
-    toast.success(`Paciente "${data.name}" criado!`);
+    setPatientToEdit(null);
+    setPatientSheetOpen(true);
+  };
+
+  const handleEditPatient = () => {
+    if (!selectedPatient) return;
+    setPatientToEdit(selectedPatient);
+    setPatientSheetOpen(true);
+  };
+
+  const handlePatientSheetClose = (open: boolean) => {
+    if (!open) setPatientToEdit(null);
+    setPatientSheetOpen(open);
+  };
+
+  const handlePatientCreated = (patient: PatientItem) => {
+    setSelectedPatient(patient);
+    setPatientSheetOpen(false);
+    setPatientToEdit(null);
+    toast.success(`Paciente "${patient.name}" adicionado!`);
+  };
+
+  const handlePatientUpdated = (patient: PatientItem) => {
+    setSelectedPatient(patient);
+    setPatientSheetOpen(false);
+    setPatientToEdit(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,7 +175,7 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
     <form onSubmit={handleSubmit} className="mt-8 space-y-6">
       {/* Patient */}
       <div className="space-y-2">
-        <Label htmlFor="patient">Paciente *</Label>
+        <Label htmlFor="patient" required>Paciente</Label>
         <Popover open={patientOpen} onOpenChange={setPatientOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -173,15 +213,10 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
                         variant="outline"
                         size="sm"
                         className="gap-2"
-                        onClick={handleCreatePatient}
-                        disabled={isCreatingPatient}
+                        onClick={handleOpenNewPatientSheet}
                       >
-                        {isCreatingPatient ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <UserPlus className="h-4 w-4" />
-                        )}
-                        Criar &quot;{patientQuery}&quot;
+                        <UserPlus className="h-4 w-4" />
+                        Novo paciente
                       </Button>
                     </div>
                   </CommandEmpty>
@@ -206,11 +241,11 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
                     {patientQuery.length >= 2 && (
                       <CommandItem
                         value="__create__"
-                        onSelect={handleCreatePatient}
+                        onSelect={handleOpenNewPatientSheet}
                         className="gap-2 text-primary"
                       >
                         <UserPlus className="h-4 w-4" />
-                        Criar &quot;{patientQuery}&quot; como novo paciente
+                        Novo paciente
                       </CommandItem>
                     )}
                   </CommandGroup>
@@ -219,11 +254,82 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
             </Command>
           </PopoverContent>
         </Popover>
+        {selectedPatient && (
+          <div className="rounded-lg border bg-card p-4 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex min-w-0 flex-1 items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <User className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1 space-y-2 text-sm">
+                <h3 className="font-semibold text-foreground">{selectedPatient.name}</h3>
+                <dl className="grid gap-1.5 sm:grid-cols-2">
+                  {selectedPatient.birth_date && (
+                    <div>
+                      <dt className="text-muted-foreground">Nascimento</dt>
+                      <dd>{formatDate(selectedPatient.birth_date)}</dd>
+                    </div>
+                  )}
+                  {selectedPatient.cpf && (
+                    <div>
+                      <dt className="text-muted-foreground">CPF</dt>
+                      <dd>{formatCpf(selectedPatient.cpf)}</dd>
+                    </div>
+                  )}
+                  {selectedPatient.gender && (
+                    <div>
+                      <dt className="text-muted-foreground">Gênero</dt>
+                      <dd>{formatGender(selectedPatient.gender)}</dd>
+                    </div>
+                  )}
+                  {selectedPatient.phone && (
+                    <div>
+                      <dt className="text-muted-foreground">Telefone</dt>
+                      <dd>{selectedPatient.phone}</dd>
+                    </div>
+                  )}
+                  {selectedPatient.mother_name && (
+                    <div>
+                      <dt className="text-muted-foreground">Nome da Mãe</dt>
+                      <dd>{selectedPatient.mother_name}</dd>
+                    </div>
+                  )}
+                </dl>
+                {selectedPatient.notes && (
+                  <div className="sm:col-span-2">
+                    <span className="text-muted-foreground">Observações: </span>
+                    <span className="text-muted-foreground">{selectedPatient.notes}</span>
+                  </div>
+                )}
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="shrink-0 gap-1.5"
+                onClick={handleEditPatient}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Editar
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
+
+      <PatientSheet
+        open={patientSheetOpen}
+        onOpenChange={handlePatientSheetClose}
+        patient={patientToEdit}
+        defaultName={patientToEdit ? undefined : (patientQuery.trim() || undefined)}
+        onCreated={handlePatientCreated}
+        onUpdated={handlePatientUpdated}
+      />
 
       {/* Unit */}
       <div className="space-y-2">
-        <Label htmlFor="unit">Unidade de Atendimento *</Label>
+        <Label htmlFor="unit" required>Unidade de Atendimento</Label>
         <Select value={unitId} onValueChange={setUnitId}>
           <SelectTrigger id="unit">
             <SelectValue placeholder="Selecione a unidade..." />
@@ -238,7 +344,7 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
 
       {/* Template - filtrado pela unidade selecionada */}
       <div className="space-y-2">
-        <Label htmlFor="template">Modelo de Exame *</Label>
+        <Label htmlFor="template" required>Modelo de Exame</Label>
         <Select
           value={templateId}
           onValueChange={setTemplateId}

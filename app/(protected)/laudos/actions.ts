@@ -28,7 +28,7 @@ export async function searchPatients(query: string) {
   const { supabase, user } = await getAuthUser();
   const { data, error } = await supabase
     .from("patients")
-    .select("id, name, cpf, birth_date")
+    .select("id, name, cpf, birth_date, gender, phone, mother_name, notes")
     .eq("user_id", user.id)
     .ilike("name", `%${query}%`)
     .order("name")

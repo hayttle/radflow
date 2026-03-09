@@ -160,7 +160,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
         }
         return;
       }
-      toast.success(template ? "Modelo atualizado!" : "Modelo cadastrado!");
+      toast.success(template?.id ? "Modelo atualizado!" : "Modelo cadastrado!");
       onOpenChange(false);
     });
   }
@@ -170,7 +170,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
       <SheetContent className="overflow-y-auto w-full sm:max-w-3xl md:w-3/4 p-0" side="right">
         <div className="p-6 border-b shrink-0 bg-background/95 backdrop-blur-sm sticky top-0 z-10">
           <SheetHeader>
-            <SheetTitle>{template ? "Editar Modelo de Exame" : "Novo Modelo de Exame"}</SheetTitle>
+            <SheetTitle>{template?.id ? "Editar Modelo de Exame" : "Novo Modelo de Exame"}</SheetTitle>
             <SheetDescription>
               Configure o texto padrão e defina variáveis do sistema.
             </SheetDescription>
@@ -191,7 +191,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div className="space-y-2">
-                <Label htmlFor="title">Título do Exame *</Label>
+                <Label htmlFor="title" required>Título do Exame</Label>
                 <Input
                   id="title"
                   value={title}
@@ -311,7 +311,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
               ) : (
                 <Save className="h-4 w-4 mr-2" />
               )}
-              {template ? "Salvar Modelo" : "Cadastrar Modelo"}
+              {template?.id ? "Salvar Modelo" : "Cadastrar Modelo"}
             </Button>
           </div>
         </form>

@@ -62,7 +62,7 @@ export function PhraseSheet({ open, onOpenChange, phrase }: PhraseSheetProps) {
 
         <form ref={formRef} onSubmit={onSubmit} className="space-y-6 mt-6 pb-6">
           <div className="space-y-2">
-            <Label htmlFor="category">Categoria *</Label>
+            <Label htmlFor="category" required>Categoria</Label>
             <Input
               id="category"
               name="category"
@@ -82,7 +82,7 @@ export function PhraseSheet({ open, onOpenChange, phrase }: PhraseSheetProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">Texto do Laudo *</Label>
+            <Label htmlFor="content" required>Texto do Laudo</Label>
             <Textarea
               id="content"
               name="content"

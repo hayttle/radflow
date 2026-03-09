@@ -15,11 +15,12 @@ async function getAuthUser() {
 }
 
 export async function savePatient(formData: FormData, patientId?: string) {
+  const rawGender = formData.get("gender");
   const raw = {
     name: formData.get("name"),
     cpf: formData.get("cpf") || null,
-    birth_date: formData.get("birth_date") || null,
-    gender: formData.get("gender") || null,
+    birth_date: formData.get("birth_date") ?? "",
+    gender: (rawGender && rawGender !== "none" ? rawGender : null) as string | null,
     phone: formData.get("phone") || null,
     mother_name: formData.get("mother_name") || null,
     notes: formData.get("notes") || null,
@@ -34,22 +35,28 @@ export async function savePatient(formData: FormData, patientId?: string) {
 
   if (patientId) {
     // Update
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("patients")
       .update(parsed.data)
       .eq("id", patientId)
-      .eq("user_id", user.id);
+      .eq("user_id", user.id)
+      .select("id, name, cpf, birth_date, gender, phone, mother_name, notes")
+      .single();
     if (error) return { error: error.message };
+    revalidatePath("/pacientes");
+    return { success: true, data };
   } else {
     // Insert
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("patients")
-      .insert({ ...parsed.data, user_id: user.id });
+      .insert({ ...parsed.data, user_id: user.id })
+      .select("id, name, cpf, birth_date")
+      .single();
     if (error) return { error: error.message };
+    revalidatePath("/pacientes");
+    return { success: true, data };
   }
 
-  revalidatePath("/pacientes");
-  return { success: true };
 }
 
 export async function deletePatient(patientId: string) {

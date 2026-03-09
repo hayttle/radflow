@@ -19,7 +19,7 @@ export type UnitInput = z.infer<typeof UnitSchema>;
 // ============================================================
 export const PatientSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(300),
-  birth_date: z.string().optional().nullable(),
+  birth_date: z.string().min(1, "Data de nascimento é obrigatória"),
   cpf: z
     .string()
     .optional()

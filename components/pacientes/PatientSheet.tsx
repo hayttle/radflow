@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useRef } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -18,29 +18,60 @@ import { savePatient } from "@/app/(protected)/pacientes/actions";
 import type { Patient } from "@/types/supabase";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+export type CreatedPatient = {
+  id: string;
+  name: string;
+  cpf: string | null;
+  birth_date: string | null;
+};
+
+export type UpdatedPatient = CreatedPatient & {
+  gender?: string | null;
+  phone?: string | null;
+  mother_name?: string | null;
+  notes?: string | null;
+};
+
 interface PatientSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   patient?: Patient | null;
+  /** Nome padrão para novo paciente (ex: termo de busca) */
+  defaultName?: string;
+  /** Chamado após criar paciente com sucesso; recebe os dados do paciente criado */
+  onCreated?: (patient: CreatedPatient) => void;
+  /** Chamado após atualizar paciente com sucesso; recebe os dados atualizados */
+  onUpdated?: (patient: UpdatedPatient) => void;
 }
 
-export function PatientSheet({ open, onOpenChange, patient }: PatientSheetProps) {
-  const [isPending, startTransition] = useTransition();
+export function PatientSheet({
+  open,
+  onOpenChange,
+  patient,
+  defaultName,
+  onCreated,
+  onUpdated,
+}: PatientSheetProps) {
+  const [isPending, setIsPending] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
-  async function action(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!formRef.current) return;
+
+    const formData = new FormData(formRef.current);
     if (patient) {
       formData.append("id", patient.id);
     }
-    
-    startTransition(async () => {
+
+    setIsPending(true);
+    try {
       const result = await savePatient(formData, patient?.id);
-      
+
       if (result.error) {
         if (typeof result.error === "string") {
           toast.error("Erro", { description: result.error });
         } else {
-          // Zod field errors
           const msgs = Object.values(result.error).flat().map(String).join(", ");
           toast.error("Erro de validação", { description: msgs });
         }
@@ -48,8 +79,18 @@ export function PatientSheet({ open, onOpenChange, patient }: PatientSheetProps)
       }
 
       toast.success(patient ? "Paciente atualizado!" : "Paciente cadastrado!");
+
+      if (!patient && result.data && onCreated) {
+        onCreated(result.data as CreatedPatient);
+      }
+      if (patient && result.data && onUpdated) {
+        onUpdated(result.data as UpdatedPatient);
+      }
+
       onOpenChange(false);
-    });
+    } finally {
+      setIsPending(false);
+    }
   }
 
   // Helper to pre-format dates for the native date input (YYYY-MM-DD)
@@ -63,17 +104,17 @@ export function PatientSheet({ open, onOpenChange, patient }: PatientSheetProps)
         <SheetHeader>
           <SheetTitle>{patient ? "Editar Paciente" : "Novo Paciente"}</SheetTitle>
           <SheetDescription>
-            {patient ? "Atualize" : "Preencha"} as informações do paciente abaixo. O nome é obrigatório.
+            {patient ? "Atualize" : "Preencha"} as informações do paciente abaixo. Nome e data de nascimento são obrigatórios.
           </SheetDescription>
         </SheetHeader>
 
-        <form ref={formRef} action={action} className="space-y-6 mt-6 pb-6">
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 mt-6 pb-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Nome Completo *</Label>
+            <Label htmlFor="name" required>Nome Completo</Label>
             <Input
               id="name"
               name="name"
-              defaultValue={patient?.name}
+              defaultValue={patient?.name ?? defaultName ?? ""}
               placeholder="Digite o nome do paciente"
               required
             />
@@ -90,12 +131,13 @@ export function PatientSheet({ open, onOpenChange, patient }: PatientSheetProps)
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="birth_date">Data de Nascimento</Label>
+              <Label htmlFor="birth_date" required>Data de Nascimento</Label>
               <Input
                 id="birth_date"
                 name="birth_date"
                 type="date"
                 defaultValue={defaultDate}
+                required
               />
             </div>
           </div>
@@ -111,7 +153,7 @@ export function PatientSheet({ open, onOpenChange, patient }: PatientSheetProps)
                   <SelectItem value="none">Prefiro não informar</SelectItem>
                   <SelectItem value="M">Masculino</SelectItem>
                   <SelectItem value="F">Feminino</SelectItem>
-                  <SelectItem value="Outro">Outro</SelectItem>
+                  <SelectItem value="O">Outro</SelectItem>
                 </SelectContent>
               </Select>
             </div>

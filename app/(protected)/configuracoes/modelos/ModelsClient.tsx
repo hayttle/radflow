@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Plus, Pencil, Trash, FileText, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Pencil, Trash, Copy, FileText, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { deleteExamTemplate } from "./actions";
@@ -21,6 +21,17 @@ export function ModelsClient({ templates, units }: { templates: ExamTemplate[], 
 
   const handleEdit = (t: ExamTemplate) => {
     setEditingTemplate(t);
+    setSheetOpen(true);
+  };
+
+  const handleDuplicate = (t: ExamTemplate) => {
+    const copy = {
+      ...t,
+      id: undefined,
+      title: `${t.title} (Cópia)`,
+      variables: Array.isArray(t.variables) ? [...t.variables] : [],
+    };
+    setEditingTemplate(copy as ExamTemplate);
     setSheetOpen(true);
   };
 
@@ -77,12 +88,15 @@ export function ModelsClient({ templates, units }: { templates: ExamTemplate[], 
                     <p><span className="font-medium text-foreground/80">Variáveis:</span> {variables.length}</p>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-2 mt-auto">
+                  <div className="grid grid-cols-3 gap-2 mt-auto">
                     <Button variant="secondary" className="w-full text-sm font-medium" onClick={() => handleEdit(t)}>
-                      <Pencil className="h-3.5 w-3.5 mr-2" /> Editar
+                      <Pencil className="h-3.5 w-3.5 mr-1.5" /> Editar
+                    </Button>
+                    <Button variant="outline" className="w-full text-sm font-medium" onClick={() => handleDuplicate(t)}>
+                      <Copy className="h-3.5 w-3.5 mr-1.5" /> Duplicar
                     </Button>
                     <Button variant="ghost" className="w-full text-sm font-medium hover:bg-destructive/10 hover:text-destructive text-muted-foreground" onClick={() => handleDelete(t.id, t.title)} disabled={isPending}>
-                      <Trash className="h-3.5 w-3.5 mr-2" /> Excluir
+                      <Trash className="h-3.5 w-3.5 mr-1.5" /> Excluir
                     </Button>
                   </div>
                 </div>

@@ -60,7 +60,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         <form ref={formRef} onSubmit={onSubmit} className="p-6 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="full_name">Nome Completo *</Label>
+              <Label htmlFor="full_name" required>Nome Completo</Label>
               <Input
                 id="full_name"
                 name="full_name"
