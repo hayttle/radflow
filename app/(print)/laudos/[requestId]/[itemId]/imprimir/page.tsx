@@ -154,7 +154,6 @@ export default async function PrintLaudoPage({
             -webkit-print-color-adjust: exact;
             background: white !important;
           }
-          /* Cabeçalho e rodapé repetem em cada página (comportamento nativo da tabela) */
           thead { display: table-header-group; }
           tfoot { display: table-footer-group; }
         `}

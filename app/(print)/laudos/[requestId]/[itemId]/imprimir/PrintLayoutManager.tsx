@@ -3,9 +3,9 @@
 import { ReactNode } from "react";
 
 /**
- * Layout de impressão simples e confiável.
- * Usa tabela nativa: thead e tfoot repetem automaticamente em cada página impressa.
- * Assinatura fica no tbody com break-inside-avoid, aparecendo apenas no final do conteúdo.
+ * Layout de impressão: tabela nativa.
+ * - Cabeçalho (thead) e rodapé (tfoot) repetem em cada página impressa.
+ * - Assinatura apenas no final (break-inside-avoid).
  */
 export function PrintLayoutManager({
   header,
@@ -32,7 +32,7 @@ export function PrintLayoutManager({
           <tr>
             <td className="align-top pb-8 pt-4">
               {patientInfo}
-              <div className="mt-4">{content}</div>
+              <div className="mt-8">{content}</div>
               <div className="mt-12 break-inside-avoid">{signature}</div>
             </td>
           </tr>
