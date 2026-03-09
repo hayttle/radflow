@@ -21,9 +21,9 @@ import {
   FileText,
   Users,
   Building2,
-  BookTemplate,
+  Scan,
   MessageSquareQuote,
-  UserCog,
+  Signature,
   Activity,
   LayoutDashboard,
 } from "lucide-react";
@@ -55,17 +55,17 @@ const configNav = [
   {
     label: "Modelos de Exame",
     href: "/configuracoes/modelos",
-    icon: BookTemplate,
+    icon: Scan,
+  },
+  {
+    label: "Assinatura",
+    href: "/configuracoes/assinatura",
+    icon: Signature,
   },
   {
     label: "Frases Padrão",
     href: "/configuracoes/frases",
     icon: MessageSquareQuote,
-  },
-  {
-    label: "Perfil & Assinatura",
-    href: "/configuracoes/perfil",
-    icon: UserCog,
   },
 ];
 

@@ -1817,3 +1817,131 @@ I'm removing the hover border from the trigger button and addressing the focus r
 
 ---
 
+
+Removi a borda do botão do avatar na variante padrão (header) e passei a usar `border-0`.
+
+---
+
+_**User**_
+
+git add . e push
+
+---
+
+_**Agent (model composer-1.5, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Running git commands**
+
+I'm preparing to run `git add .` followed by a commit and push, though the user's request is ambiguous about the full sequence. 
+
+**Committing changes**
+
+I'm committing with a trailer using the specified commit message format. </details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git add . && git status</summary>
+
+```bash
+cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git add . && git status
+```
+
+```
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git restore --staged &lt;file&gt;..." to unstage)
+	modified:   .specstory/history/2026-03-09_19-52Z-data-table-component-implementation.md
+	new file:   .specstory/history/2026-03-09_20-10Z-sidebar-component-spacing-issue.md
+	modified:   app/(protected)/layout.tsx
+	modified:   components/app-sidebar.tsx
+	modified:   components/ui/sidebar.tsx
+	modified:   components/user-profile.tsx
+
+warning: in the working copy of '.specstory/history/2026-03-09_19-52Z-data-table-component-implementation.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/layout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/app-sidebar.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.specstory/history/2026-03-09_20-10Z-sidebar-component-spacing-issue.md', LF will be replaced by CRLF the next time Git touches it
+
+```
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git commit --trailer "Made-with: Cursor" -m "Sidebar: correções de overflow, tema e usuário no rodapé, dropdown Sair com ícone"</summary>
+
+```bash
+cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git commit --trailer "Made-with: Cursor" -m "Sidebar: correções de overflow, tema e usuário no rodapé, dropdown Sair com ícone"
+```
+
+```
+[master f10d0aa] Sidebar: correções de overflow, tema e usuário no rodapé, dropdown Sair com ícone
+ 6 files changed, 2127 insertions(+), 33 deletions(-)
+ create mode 100644 .specstory/history/2026-03-09_20-10Z-sidebar-component-spacing-issue.md
+
+```
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git push</summary>
+
+```bash
+cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git push
+```
+
+```
+To https://github.com/hayttle/radflow.git
+   9f13978..f10d0aa  master -&gt; master
+
+```
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+Alterações adicionadas, commit e push feitos.
+
+- **Commit:** `Sidebar: correções de overflow, tema e usuário no rodapé, dropdown Sair com ícone`
+- **Push:** concluído para `origin/master`
+
+---
+

@@ -8,6 +8,7 @@ interface PageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   description?: string;
   actions?: React.ReactNode;
   children: React.ReactNode;
+  fullWidth?: boolean;
 }
 
 export function PageContainer({
@@ -15,11 +16,15 @@ export function PageContainer({
   description,
   actions,
   children,
+  fullWidth,
   className,
   ...props
 }: PageContainerProps) {
+  const baseClasses = fullWidth
+    ? "w-full max-w-none p-0"
+    : "container mx-auto max-w-7xl py-10 px-4 md:px-6 pb-24";
   return (
-    <div className={`container mx-auto max-w-7xl py-10 px-4 md:px-6 pb-24 ${className || ""}`} {...props}>
+    <div className={`${baseClasses} ${className || ""}`} {...props}>
       {(title || description || actions) && (
         <div className="space-y-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">

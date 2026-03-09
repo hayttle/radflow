@@ -1,29 +1,27 @@
 "use client";
 
 import { useTransition, useRef, useState } from "react";
-import { Save, Loader2, User } from "lucide-react";
+import { Save, Loader2, User, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { saveProfile } from "./actions";
-import Image from "next/image";
-import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { saveProfile, updatePassword } from "./actions";
+import type { Profile } from "@/types/supabase";
 
 interface ProfileFormProps {
-  profile: any | null;
+  profile: Profile | null;
+  userEmail?: string;
 }
 
-export function ProfileForm({ profile }: ProfileFormProps) {
+export function ProfileForm({ profile, userEmail }: ProfileFormProps) {
   const [isPending, startTransition] = useTransition();
+  const [isPasswordPending, setPasswordPending] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const [signatureHtml, setSignatureHtml] = useState<string>(profile?.signature || "");
-
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    formData.append("signature", signatureHtml);
 
     startTransition(async () => {
       const result = await saveProfile(formData);
@@ -41,6 +39,22 @@ export function ProfileForm({ profile }: ProfileFormProps) {
     });
   }
 
+  async function onPasswordSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    setPasswordPending(true);
+    try {
+      const result = await updatePassword(formData);
+      if (result.error) {
+        toast.error("Erro ao alterar senha", { description: result.error });
+        return;
+      }
+      toast.success("Senha alterada com sucesso!");
+      e.currentTarget.reset();
+    } finally {
+      setPasswordPending(false);
+    }
+  }
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
@@ -52,7 +66,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-foreground">Informações Pessoais</h2>
-              <p className="text-sm text-muted-foreground">Gerencie seus dados e a assinatura utilizada na impressão dos laudos.</p>
+              <p className="text-sm text-muted-foreground">Gerencie seus dados de perfil.</p>
             </div>
           </div>
         </div>
@@ -81,15 +95,16 @@ export function ProfileForm({ profile }: ProfileFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-base font-semibold">Assinatura em Texto (HTML)</Label>
-            <p className="text-sm text-muted-foreground">
-              Defina o conteúdo da sua assinatura (texto, formatação e imagens). Esta assinatura será usada nos laudos.
-            </p>
-            <RichTextEditor 
-              value={signatureHtml} 
-              onChange={setSignatureHtml} 
-              placeholder="Digite ou cole sua assinatura aqui..." 
+            <Label htmlFor="email">E-mail</Label>
+            <Input
+              id="email"
+              type="email"
+              value={userEmail ?? ""}
+              readOnly
+              disabled
+              className="bg-muted"
             />
+            <p className="text-xs text-muted-foreground">O e-mail é vinculado à conta e não pode ser alterado aqui.</p>
           </div>
 
           <div className="pt-6 border-t flex justify-end">
@@ -100,6 +115,58 @@ export function ProfileForm({ profile }: ProfileFormProps) {
                 <Save className="h-4 w-4 mr-2" />
               )}
               {profile ? "Salvar Alterações" : "Concluir Cadastro"}
+            </Button>
+          </div>
+        </form>
+      </div>
+
+      <div className="bg-card border rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-6 border-b bg-muted/20">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-primary/10 text-primary rounded-xl">
+              <KeyRound className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Alterar Senha</h2>
+              <p className="text-sm text-muted-foreground">Defina uma nova senha para acessar sua conta.</p>
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={onPasswordSubmit} className="p-6 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="password" required>Nova Senha</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Mínimo 6 caracteres"
+                required
+                minLength={6}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm_password" required>Confirmar Senha</Label>
+              <Input
+                id="confirm_password"
+                name="confirm_password"
+                type="password"
+                placeholder="Repita a nova senha"
+                required
+                minLength={6}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isPasswordPending} variant="secondary" className="min-w-32">
+              {isPasswordPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <KeyRound className="h-4 w-4 mr-2" />
+              )}
+              Alterar Senha
             </Button>
           </div>
         </form>

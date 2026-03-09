@@ -1,7 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
+import { PageContainer } from "@/components/page-container";
 import { LaudoEditor } from "@/components/laudos/LaudoEditor";
 import type { ExamFormSnapshot, TemplateVariable } from "@/types/supabase";
+
+export const metadata = { title: "Editor de Laudo | RadFlow" };
 
 interface PageProps {
   params: Promise<{ requestId: string; itemId: string }>;
@@ -78,7 +81,8 @@ export default async function EditorPage({ params }: PageProps) {
   };
 
   return (
-    <LaudoEditor
+    <PageContainer fullWidth>
+      <LaudoEditor
       key={itemId}
       itemId={itemId}
       requestId={requestId}
@@ -91,5 +95,6 @@ export default async function EditorPage({ params }: PageProps) {
       profile={profile}
       phrases={phrases ?? []}
     />
+    </PageContainer>
   );
 }

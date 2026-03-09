@@ -2,11 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { PageContainer } from "@/components/page-container";
 import { PageHeader } from "@/components/page-header";
-import { ProfileForm } from "./ProfileForm";
+import { SignatureForm } from "./SignatureForm";
 
-export const metadata = { title: "Perfil | RadFlow" };
+export const metadata = { title: "Assinatura | RadFlow" };
 
-export default async function ProfileSettingsPage() {
+export default async function AssinaturaPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -14,16 +14,19 @@ export default async function ProfileSettingsPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("*")
+    .select("signature")
     .eq("id", user.id)
     .maybeSingle();
 
   return (
     <PageContainer>
       <div className="mb-8">
-        <PageHeader title="Perfil" description="Configure seus dados pessoais e segurança da conta" />
+        <PageHeader
+          title="Assinatura"
+          description="Configure a assinatura utilizada na impressão dos laudos"
+        />
       </div>
-      <ProfileForm profile={profile} userEmail={user.email ?? undefined} />
+      <SignatureForm initialSignature={profile?.signature} />
     </PageContainer>
   );
 }
