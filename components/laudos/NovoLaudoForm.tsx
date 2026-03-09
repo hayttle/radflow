@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition, useRef, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useUnit } from "@/contexts/unit-context";
 import { toast } from "sonner";
 import { createExamRequest, searchPatients } from "@/app/(protected)/laudos/actions";
@@ -14,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Search, UserPlus, Loader2, ChevronRight, User, Pencil } from "lucide-react";
 import {
   Command,
@@ -67,7 +65,6 @@ function formatGender(g: string): string {
 
 export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
   const { activeUnitId, isLoading: unitContextLoading } = useUnit();
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   // Patient search

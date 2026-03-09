@@ -13,9 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Save, Loader2, Plus, Trash, GripVertical } from "lucide-react";
+import { Save, Loader2, Plus, Trash } from "lucide-react";
 import { saveExamTemplate } from "@/app/(protected)/configuracoes/modelos/actions";
-import type { ExamTemplate } from "@/types/supabase";
+import type { ExamTemplate, TemplateVariable } from "@/types/supabase";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Editor } from "@tiptap/react";
 import {
@@ -76,7 +76,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
       setDescription(template?.description ?? "");
       setImpression(template?.impression ?? "");
       
-      const parsedVars = (template?.variables as any[])?.map((v) => ({
+      const parsedVars = (template?.variables as TemplateVariable[] | undefined)?.map((v) => ({
         ...v,
         options: Array.isArray(v.options) ? v.options.join("; ") : v.options,
       })) ?? [];

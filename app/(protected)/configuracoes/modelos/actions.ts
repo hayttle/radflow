@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { ExamTemplateSchema } from "@/lib/validations";
+import { ExamTemplateSchema, type ExamTemplateInput } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
 async function getAuthUser() {
@@ -11,7 +11,7 @@ async function getAuthUser() {
   return { supabase, user };
 }
 
-export async function saveExamTemplate(rawData: any, templateId?: string) {
+export async function saveExamTemplate(rawData: ExamTemplateInput | Record<string, unknown>, templateId?: string) {
   const { supabase, user } = await getAuthUser();
   
   const parsed = ExamTemplateSchema.safeParse(rawData);

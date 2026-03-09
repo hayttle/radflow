@@ -151,7 +151,9 @@ export function LaudoRichTextEditor({
     if (!editor || !onFocus) return;
     const handleFocus = () => onFocus(editor);
     editor.on("focus", handleFocus);
-    return () => editor.off("focus", handleFocus);
+    return () => {
+      editor.off("focus", handleFocus);
+    };
   }, [editor, onFocus]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -32,10 +32,12 @@ export type UpdatedPatient = CreatedPatient & {
   notes?: string | null;
 };
 
+type EditablePatient = Pick<Patient, "id" | "name"> & Partial<Pick<Patient, "cpf" | "birth_date" | "gender" | "phone" | "mother_name" | "notes">>;
+
 interface PatientSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  patient?: Patient | null;
+  patient?: EditablePatient | null;
   /** Nome padrão para novo paciente (ex: termo de busca) */
   defaultName?: string;
   /** Chamado após criar paciente com sucesso; recebe os dados do paciente criado */

@@ -47,7 +47,7 @@ export function UnitsClient({ units }: { units: Unit[] }) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {units.length === 0 ? (
           <div className="col-span-full border border-dashed rounded-xl p-12 text-center text-muted-foreground bg-muted/20">
-            Nenhuma unidade configurada. Clique em "Nova Unidade" para começar.
+            Nenhuma unidade configurada. Clique em &quot;Nova Unidade&quot; para começar.
           </div>
         ) : (
           units.map((u) => (

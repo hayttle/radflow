@@ -15,11 +15,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Save, Loader2 } from "lucide-react";
 import { saveExamPhrase } from "@/app/(protected)/configuracoes/frases/actions";
+import type { ExamPhrase } from "@/types/supabase";
 
 interface PhraseSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  phrase?: any | null; // using any since type might not be fully exported from supabase
+  phrase?: ExamPhrase | null;
 }
 
 export function PhraseSheet({ open, onOpenChange, phrase }: PhraseSheetProps) {

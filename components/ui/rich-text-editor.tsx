@@ -74,7 +74,6 @@ interface RichTextEditorProps {
 export function RichTextEditor({ 
   value, 
   onChange, 
-  placeholder,
   onReady,
   bucket = "signatures"
 }: RichTextEditorProps) {
@@ -195,9 +194,9 @@ export function RichTextEditor({
         // @ts-expect-error: setImage is provided by tiptap-extension-resize-image
         editor.chain().focus().setImage({ src: publicUrl }).run();
         toast.success("Imagem enviada com sucesso");
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Error uploading image:", error);
-        toast.error("Erro ao enviar imagem", { description: error.message });
+        toast.error("Erro ao enviar imagem", { description: error instanceof Error ? error.message : "Erro desconhecido" });
       }
     }
     // reset input

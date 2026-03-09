@@ -4,13 +4,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { TemplateVariable } from "@/types/supabase";
-import { useMemo } from "react";
-
 export interface VariableOptions {
   variables: TemplateVariable[];
   selections: Record<string, string>;
   onSelect: (name: string, value: string) => void;
-  HTMLAttributes: Record<string, any>;
+  HTMLAttributes: Record<string, string | number | boolean | undefined>;
 }
 
 declare module "@tiptap/core" {
@@ -23,9 +21,13 @@ declare module "@tiptap/core" {
 
 import { useVariableContext } from "../VariableContext";
 
-const VariableNodeView = (props: any) => {
+interface VariableNodeViewProps {
+  node: { attrs: { name?: string } };
+}
+
+const VariableNodeView = (props: VariableNodeViewProps) => {
   const { node } = props;
-  const name = node.attrs.name;
+  const name = node.attrs.name ?? "";
 
   const { variables, selections, onSelect } = useVariableContext();
   const variable = variables.find((v) => v.name === name);

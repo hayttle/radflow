@@ -255,11 +255,13 @@ async function upsertExamReport(itemId: string, providedSnapshot?: ExamFormSnaps
   if (!item || !item.exam_requests) return;
 
   const snapshot = providedSnapshot || (item.form_snapshot as unknown as ExamFormSnapshot);
-  const template = item.exam_templates as any;
-  const request = item.exam_requests as any;
+  const template = item.exam_templates as { title?: string; technique?: string | null; description?: string | null; impression?: string | null } | null;
+  const requests = item.exam_requests as { patient_id: string; unit_id: string }[] | { patient_id: string; unit_id: string };
+  const request = Array.isArray(requests) ? requests[0] : requests;
+  if (!request) return;
 
   // Render content with template defaults if snapshot is missing sections
-  const content = generateReportHTML(snapshot, template);
+  const content = generateReportHTML(snapshot, template ?? undefined);
   const title = template?.title || "LAUDO";
 
   // 2. Upsert the mirror record
