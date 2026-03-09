@@ -3546,7 +3546,226 @@ I'm adding lateral padding to SheetContent to match the padding used in SheetHea
 
 I'm adding horizontal padding to SheetContent to match the form's vertical spacing. I'm adding px-6 padding to SheetContent for consistent lateral spacing. 
 
-I'll remove px-6 from SheetContent to avoid double horizontal padding with SheetHeader's p-4. </details></think>
+I'll remove px-6 from SheetContent to avoid double horizontal padding with SheetHeader's p-4. Removing px-6 from SheetContent will prevent double padding with SheetHeader's p-4. I'll add px-6 to SheetContent for lateral padding and consider py for vertical consistency. </details></think>
+
+---
+
+
+Adicionando padding lateral ao componente base `Sheet`, afetando todos os sheets.
+
+
+---
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\ui\sheet.tsx</summary>
+
+</details>
+
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+**Adjusting close button positioning**
+
+I'm adjusting the close button's positioning to account for the content padding and prevent overlap. The close button's absolute positioning is relative to the Content's padding box, so `right-4` places it 1rem from the padding edge, not the content edge. 
+
+The close button needs to be positioned relative to the content area, not the padding box, so I'll adjust the positioning to align with the actual content edge. The close button's absolute positioning needs to account for padding, so I'll adjust the right offset to align with the content edge instead of the padding edge. The close button's positioning needs adjustment to account for 1.5rem right padding, making it 2.5rem from the sheet's right edge instead of 1rem. 
+
+I'm reconsidering the close button positioning to avoid overlap with padded content by adding padding only to the scrollable body. I'm adjusting the header padding to px-4 to reduce lateral spacing and match the user's request for no lateral padding. 
+
+I'm adding px-6 padding to the form container and positioning the close button with right-4 to maintain proper spacing relative to the padding edge. I'm reducing SheetHeader and SheetFooter padding to avoid excessive spacing since content now has horizontal padding. </details></think>
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="unknown" data-tool-name="read_lints">
+<details>
+<summary>Tool use: **read_lints**</summary>
+
+
+Parameters:
+
+```json
+{
+  "paths": [
+    "c:\\Users\\haytt\\OneDrive\\Documentos\\Projetos Saas\\radflow\\components\\ui\\sheet.tsx"
+  ]
+}
+```
+Result:
+
+```json
+{
+  "linterErrorsByFile": [
+    {
+      "relativeWorkspacePath": "c:\\Users\\haytt\\OneDrive\\Documentos\\Projetos Saas\\radflow\\components\\ui\\sheet.tsx"
+    }
+  ]
+}
+```
+Status: **completed**
+
+
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+Atualizei o `SheetContent` no componente base `sheet.tsx` com `px-6` para aplicar padding lateral em todos os sheets (PatientSheet, ModelSheet, PhraseSheet, UnitSheet).
+
+---
+
+_**User**_
+
+git add . e push
+
+---
+
+_**Agent (model composer-1.5, mode Agent)**_
+
+
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git add . && git status</summary>
+
+```bash
+cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git add . && git status
+```
+
+```
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git restore --staged &lt;file&gt;..." to unstage)
+	modified:   .specstory/history/2026-03-09_19-20Z-classroom-editor-layout-transformation.md
+	new file:   .specstory/history/2026-03-09_19-52Z-data-table-component-implementation.md
+	modified:   app/(protected)/configuracoes/frases/PhrasesClient.tsx
+	modified:   app/(protected)/configuracoes/frases/page.tsx
+	modified:   app/(protected)/configuracoes/modelos/ModelsClient.tsx
+	modified:   app/(protected)/configuracoes/modelos/page.tsx
+	modified:   app/(protected)/pacientes/actions.ts
+	modified:   app/(protected)/pacientes/client.tsx
+	modified:   app/(protected)/pacientes/page.tsx
+	modified:   app/layout.tsx
+	modified:   components/configuracoes/ModelSheet.tsx
+	new file:   components/configuracoes/ModelsFilter.tsx
+	new file:   components/configuracoes/PhrasesFilter.tsx
+	modified:   components/pacientes/PatientSheet.tsx
+	new file:   components/pacientes/PatientsFilter.tsx
+	new file:   components/ui/delete-confirm-dialog.tsx
+	modified:   components/ui/sheet.tsx
+
+warning: in the working copy of '.specstory/history/2026-03-09_19-20Z-classroom-editor-layout-transformation.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/configuracoes/frases/PhrasesClient.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/configuracoes/frases/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/configuracoes/modelos/ModelsClient.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/configuracoes/modelos/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/pacientes/actions.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/pacientes/client.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/pacientes/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/configuracoes/ModelSheet.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/pacientes/PatientSheet.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.specstory/history/2026-03-09_19-52Z-data-table-component-implementation.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/configuracoes/ModelsFilter.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/configuracoes/PhrasesFilter.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/pacientes/PatientsFilter.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/ui/delete-confirm-dialog.tsx', LF will be replaced by CRLF the next time Git touches it
+
+```
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git commit --trailer "Made-with: Cursor" -m "feat: data-table, filtros e melhorias em modelos, frases e pacientes
+
+- /configuracoes/modelos: DataTable, ModelsFilter (nome, unidade), paginação, DeleteConfirmDialog
+- /configuracoes/frases: DataTable, PhrasesFilter (categoria), DeleteConfirmDialog
+- /pacientes: DataTable, PatientsFilter (pesquisa), colunas nome, CPF, telefone, nascimento, atendimentos
+- DeleteConfirmDialog reutilizável para confirmação de exclusão
+- PatientSheet: alerta inline para erro de CPF duplicado, sem toast duplicado
+- actions pacientes: mensagem amigável para erro 23505 (CPF único)
+- app layout: Toaster com z-index 9999 para aparecer acima de sheets
+- sheet.tsx: padding lateral px-6 no container"</summary>
+
+```bash
+cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git commit --trailer "Made-with: Cursor" -m "feat: data-table, filtros e melhorias em modelos, frases e pacientes
+
+- /configuracoes/modelos: DataTable, ModelsFilter (nome, unidade), paginação, DeleteConfirmDialog
+- /configuracoes/frases: DataTable, PhrasesFilter (categoria), DeleteConfirmDialog
+- /pacientes: DataTable, PatientsFilter (pesquisa), colunas nome, CPF, telefone, nascimento, atendimentos
+- DeleteConfirmDialog reutilizável para confirmação de exclusão
+- PatientSheet: alerta inline para erro de CPF duplicado, sem toast duplicado
+- actions pacientes: mensagem amigável para erro 23505 (CPF único)
+- app layout: Toaster com z-index 9999 para aparecer acima de sheets
+- sheet.tsx: padding lateral px-6 no container"
+```
+
+```
+[master 9f13978] feat: data-table, filtros e melhorias em modelos, frases e pacientes
+ 17 files changed, 5362 insertions(+), 304 deletions(-)
+ create mode 100644 .specstory/history/2026-03-09_19-52Z-data-table-component-implementation.md
+ create mode 100644 components/configuracoes/ModelsFilter.tsx
+ create mode 100644 components/configuracoes/PhrasesFilter.tsx
+ create mode 100644 components/pacientes/PatientsFilter.tsx
+ create mode 100644 components/ui/delete-confirm-dialog.tsx
+
+```
+</details>
+</tool-use>
+
+---
+
+
+
+---
+
+
+
+
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git push</summary>
+
+```bash
+cd "c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow" && git push
+```
+</details>
+</tool-use>
 
 ---
 

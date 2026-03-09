@@ -1,7 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { UserProfile } from "@/components/user-profile";
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { UnitSwitcher } from "@/components/unit-switcher";
 import { UnitProvider } from "@/contexts/unit-context";
 import { createClient } from "@/lib/supabase/server";
@@ -19,27 +18,35 @@ async function AuthWrapper({ children }: { children: React.ReactNode }) {
     return redirect("/auth/login");
   }
 
-  // Fetch units for this user to seed the UnitContext
-  const { data: units } = await supabase
-    .from("units")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("active", true)
-    .order("name", { ascending: true });
+  const [{ data: units }, { data: profile }] = await Promise.all([
+    supabase
+      .from("units")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("active", true)
+      .order("name", { ascending: true }),
+    supabase.from("profiles").select("full_name").eq("id", user.id).single(),
+  ]);
+
+  const userName = profile?.full_name ?? (user.user_metadata?.full_name as string | undefined);
 
   return (
     <UnitProvider initialUnits={(units as Unit[]) ?? []}>
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar
+          userEmail={user.email}
+          userName={userName}
+          avatarUrl={user.user_metadata?.avatar_url}
+        />
         <SidebarInset className="flex flex-col h-screen min-w-0 overflow-hidden">
           {/* Fixed Header */}
           <header className="flex h-16 shrink-0 items-center justify-between border-b px-6 bg-background sticky top-0 z-10 w-full">
             <SidebarTrigger />
             <div className="flex items-center gap-3">
               <UnitSwitcher />
-              <ThemeSwitcher />
               <UserProfile
                 userEmail={user.email}
+                userName={userName}
                 avatarUrl={user.user_metadata?.avatar_url}
               />
             </div>

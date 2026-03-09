@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -14,6 +15,8 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { UserProfile } from "@/components/user-profile";
 import {
   FileText,
   Users,
@@ -66,7 +69,13 @@ const configNav = [
   },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  userEmail?: string;
+  userName?: string;
+  avatarUrl?: string;
+}
+
+export function AppSidebar({ userEmail, userName, avatarUrl }: AppSidebarProps) {
   const pathname = usePathname();
 
   const isActive = (href: string) =>
@@ -91,7 +100,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(href)}
-                    className="py-6 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
+                    className="py-5 transition-all duration-200 data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
                   >
                     <Link href={href} className="flex items-center">
                       <Icon className="h-5 w-5" />
@@ -118,7 +127,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(href)}
-                    className="py-5 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
+                    className="py-4 transition-all duration-200 data-[active=true]:bg-primary/10 data-[active=true]:text-primary"
                   >
                     <Link href={href} className="flex items-center">
                       <Icon className="h-4 w-4" />
@@ -131,6 +140,20 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t">
+        <div className="flex items-center gap-2 px-2 py-1.5">
+          <div className="min-w-0 flex-1">
+            <UserProfile
+              variant="sidebar"
+              userEmail={userEmail}
+              userName={userName}
+              avatarUrl={avatarUrl}
+            />
+          </div>
+          <ThemeSwitcher />
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
