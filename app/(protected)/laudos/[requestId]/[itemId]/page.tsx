@@ -79,6 +79,7 @@ export default async function EditorPage({ params }: PageProps) {
 
   return (
     <LaudoEditor
+      key={itemId}
       itemId={itemId}
       requestId={requestId}
       status={item.status}
