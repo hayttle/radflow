@@ -11,6 +11,17 @@ import {
 import type { Unit } from "@/types/supabase";
 
 const STORAGE_KEY = "radflow_active_unit_id";
+const COOKIE_NAME = "radflow_active_unit_id";
+
+function setUnitCookie(unitId: string | null) {
+  if (typeof document === "undefined") return;
+  const maxAge = 60 * 60 * 24 * 365; // 1 ano
+  if (unitId) {
+    document.cookie = `${COOKIE_NAME}=${unitId};path=/;max-age=${maxAge};SameSite=Lax`;
+  } else {
+    document.cookie = `${COOKIE_NAME}=;path=/;max-age=0`;
+  }
+}
 
 interface UnitContextValue {
   activeUnit: Unit | null;
@@ -53,10 +64,16 @@ export function UnitProvider({ children, initialUnits }: UnitProviderProps) {
     setActiveUnitState(unit);
     if (unit) {
       localStorage.setItem(STORAGE_KEY, unit.id);
+      setUnitCookie(unit.id);
     } else {
       localStorage.removeItem(STORAGE_KEY);
+      setUnitCookie(null);
     }
   }, []);
+
+  useEffect(() => {
+    if (activeUnit) setUnitCookie(activeUnit.id);
+  }, [activeUnit]);
 
   return (
     <UnitContext.Provider

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useRef, useCallback } from "react";
+import { useState, useTransition, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUnit } from "@/contexts/unit-context";
 import { toast } from "sonner";
@@ -46,7 +46,7 @@ interface NovoLaudoFormProps {
 }
 
 export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
-  const { activeUnitId } = useUnit();
+  const { activeUnitId, isLoading: unitContextLoading } = useUnit();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -59,9 +59,34 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
   const [isCreatingPatient, setIsCreatingPatient] = useState(false);
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Form values
-  const [unitId, setUnitId] = useState(activeUnitId ?? "");
+  // Form values - unidade padrão do contexto (aguarda contexto carregar)
+  const [unitId, setUnitId] = useState("");
+
+  useEffect(() => {
+    if (!unitContextLoading && activeUnitId && !unitId) {
+      const existsInUnits = units.some((u) => u.id === activeUnitId);
+      if (existsInUnits) setUnitId(activeUnitId);
+    }
+  }, [unitContextLoading, activeUnitId, unitId, units]);
+
   const [templateId, setTemplateId] = useState("");
+
+  // Limpa template quando troca a unidade (pode não existir na nova unidade)
+  useEffect(() => {
+    if (unitId && templateId) {
+      const template = templates.find((t) => t.id === templateId);
+      const belongsToUnit =
+        !template?.unit_id || template.unit_id === unitId;
+      if (!belongsToUnit) setTemplateId("");
+    }
+  }, [unitId, templateId, templates]);
+
+  // Modelos filtrados pela unidade: comuns (unit_id null) + da unidade selecionada
+  const filteredTemplates = unitId
+    ? templates.filter(
+        (t) => t.unit_id === null || t.unit_id === unitId
+      )
+    : [];
 
   const handlePatientSearch = useCallback(async (query: string) => {
     setPatientQuery(query);
@@ -211,15 +236,25 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
         </Select>
       </div>
 
-      {/* Template */}
+      {/* Template - filtrado pela unidade selecionada */}
       <div className="space-y-2">
         <Label htmlFor="template">Modelo de Exame *</Label>
-        <Select value={templateId} onValueChange={setTemplateId}>
+        <Select
+          value={templateId}
+          onValueChange={setTemplateId}
+          disabled={!unitId}
+        >
           <SelectTrigger id="template">
-            <SelectValue placeholder="Selecione o modelo..." />
+            <SelectValue
+              placeholder={
+                unitId
+                  ? "Selecione o modelo..."
+                  : "Selecione a unidade primeiro"
+              }
+            />
           </SelectTrigger>
           <SelectContent>
-            {templates.map((t) => (
+            {filteredTemplates.map((t) => (
               <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>
             ))}
           </SelectContent>
