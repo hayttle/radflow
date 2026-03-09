@@ -21,7 +21,7 @@ export default function PrintLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gray-100 print:bg-white text-black font-sans">
+    <div className="min-h-screen print:min-h-0 print:block bg-gray-100 print:bg-white text-black font-sans">
       <Suspense fallback={null}>
         <AuthGuard />
       </Suspense>

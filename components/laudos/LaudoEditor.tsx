@@ -112,7 +112,7 @@ export function LaudoEditor({
     // 1. Save current editor content to state before switching (to prevent data loss)
     // We use a functional update to ensure we have the most recent content from the editor
     const currentHTML = editor.getHTML();
-    
+
     // 2. Load the new section
     // Use a small delay to avoid flushSync error in React 18 lifecycle
     const timer = setTimeout(() => {
@@ -127,11 +127,11 @@ export function LaudoEditor({
     if (!editor) return;
 
     const currentHTML = editor.getHTML();
-    
+
     // Update local contents state so it stays in sync
     setContents(prev => ({
-        ...prev,
-        [activeSection]: currentHTML
+      ...prev,
+      [activeSection]: currentHTML
     }));
 
     clearTimeout(autosaveTimer.current);
@@ -213,9 +213,6 @@ export function LaudoEditor({
                 Salvo {lastSaved.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
               </span>
             )}
-            <Badge variant={isCompleted ? "outline" : "secondary"}>
-              {isCompleted ? "Concluído" : "Rascunho"}
-            </Badge>
             <Button
               variant="outline"
               size="sm"
@@ -224,17 +221,6 @@ export function LaudoEditor({
             >
               <Printer className="h-4 w-4" /> Imprimir
             </Button>
-            {!isCompleted && (
-              <Button
-                size="sm"
-                className="gap-1.5"
-                onClick={handleFinalize}
-                disabled={isPending}
-              >
-                <CheckCircle className="h-4 w-4" />
-                Finalizar
-              </Button>
-            )}
           </div>
         </div>
 
@@ -314,16 +300,6 @@ export function LaudoEditor({
             </Button>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 h-8"
-              onClick={() => window.open(`/laudos/${requestId}/${itemId}/imprimir`, "_blank")}
-              title="Abrir versão para impressão em nova guia"
-            >
-              <Printer className="h-3.5 w-3.5" />
-              Imprimir
-            </Button>
             <Button
               variant="secondary"
               size="sm"

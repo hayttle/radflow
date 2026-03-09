@@ -4,6 +4,7 @@ import { format, differenceInYears } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import type { Patient, Unit, Profile, ExamTemplate, ExamRequest } from "@/types/supabase";
 import { PrintButton } from "./PrintButton";
+import { PrintLayoutManager } from "./PrintLayoutManager";
 
 export const metadata = {
   title: "Impressão de Laudo | RadFlow",
@@ -142,93 +143,97 @@ export default async function PrintLaudoPage({
         {`
           @page {
             size: A4 portrait;
-            margin: 0;
+            margin: 10mm; /* top right bottom left - iguais */
           }
-          body {
-            margin: 0;
-            padding: 0;
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+            -webkit-print-color-adjust: exact;
+            background: white !important;
           }
+          /* Cabeçalho e rodapé repetem em cada página (comportamento nativo da tabela) */
+          thead { display: table-header-group; }
+          tfoot { display: table-footer-group; }
         `}
       </style>
-      <div className="mx-auto min-h-screen w-full bg-gray-100 print:bg-white text-black p-4 md:p-8 print:p-0 flex flex-col items-center">
+      <div className="mx-auto min-h-screen print:min-h-0 w-full bg-gray-100 print:bg-white text-black p-4 md:p-8 print:p-0">
         {/* Floating print button for screen only */}
         <div className="fixed top-4 right-4 md:top-8 md:right-8 print:hidden z-50">
           <PrintButton />
         </div>
 
-        <div className="print:block w-full max-w-[210mm] min-h-[297mm] print:min-h-0 print:h-auto bg-white print:shadow-none shadow-xl mx-auto overflow-hidden flex flex-col pt-8 print:pt-4">
-          {/* Header */}
-          {unit.report_header ? (
-            <div
-              className="mb-4 pt-4 px-8 pb-0 prose prose-sm max-w-none prose-p:my-0 prose-headings:my-0 flow-root clear-both"
-              dangerouslySetInnerHTML={{ __html: renderContent(unit.report_header) }}
-            />
-          ) : (
-            <div className="mb-4 pt-4 px-8 pb-4 border-b text-center">
-              <h1 className="text-2xl font-bold uppercase">{unit.name}</h1>
-            </div>
-          )}
+        <PrintLayoutManager
+          header={
+            unit.report_header ? (
+              <div
+                className="mb-4 pt-4 px-8 pb-0 prose prose-sm max-w-none prose-p:my-0 prose-headings:my-0 flow-root clear-both"
+                dangerouslySetInnerHTML={{ __html: renderContent(unit.report_header) }}
+              />
+            ) : (
+              <div className="mb-4 pt-4 px-8 pb-4 border-b text-center">
+                <h1 className="text-2xl font-bold uppercase">{unit.name}</h1>
+              </div>
+            )
+          }
 
-          {/* Patient Info Block */}
-          <div className="mt-4 mb-4 mx-8 grid grid-cols-2 gap-x-8 text-sm clear-both">
-            <div className="space-y-1">
-              <p><span className="text-[#3b82f6] font-medium">Paciente:</span> <span className="text-black">{patient.name}</span></p>
-              {patient.birth_date && (
+          patientInfo={
+            <div className="mt-4 mx-8 grid grid-cols-2 gap-x-8 text-sm clear-both">
+              <div className="space-y-1">
+                <p><span className="text-[#3b82f6] font-medium">Paciente:</span> <span className="text-black">{patient.name}</span></p>
+                {patient.birth_date && (
+                  <p>
+                    <span className="text-[#3b82f6] font-medium">Data de Nascimento:</span>{" "}
+                    <span className="text-black">
+                      {format(new Date(patient.birth_date + "T00:00:00"), "dd/MM/yyyy")}
+                      {age !== null && ` (${age} anos)`}
+                    </span>
+                  </p>
+                )}
+              </div>
+              <div className="text-right flex flex-col justify-start">
                 <p>
-                  <span className="text-[#3b82f6] font-medium">Data de Nascimento:</span>{" "}
-                  <span className="text-black">
-                    {format(new Date(patient.birth_date + "T00:00:00"), "dd/MM/yyyy")}
-                    {age !== null && ` (${age} anos)`}
-                  </span>
+                  <span className="text-[#3b82f6] font-medium">Data do Exame:</span>{" "}
+                  <span className="text-black">{format(new Date(request.date + "T00:00:00"), "dd/MM/yyyy")}</span>
                 </p>
-              )}
+              </div>
             </div>
-            <div className="text-right flex flex-col justify-start">
-              <p>
-                <span className="text-[#3b82f6] font-medium">Data do Exame:</span>{" "}
-                <span className="text-black">{format(new Date(request.date + "T00:00:00"), "dd/MM/yyyy")}</span>
-              </p>
-            </div>
-          </div>
+          }
 
-          {/* Content Area - flex-1 fills remaining space, eliminating blank whitespace */}
-          <div className="flex-1 mt-1 py-2">
-            {/* Exam Title - Centered, Uppercase, above the body */}
-            <div className="text-center mb-3">
-              <h2 className="text-xl font-bold uppercase underline tracking-tight">
-                {template?.title || "EXAME"}
-              </h2>
-            </div>
+          content={
+            <>
+              <div className="text-center mb-3">
+                <h2 className="text-xl font-bold uppercase underline tracking-tight">
+                  {template?.title || "EXAME"}
+                </h2>
+              </div>
+              <div className="space-y-6 mx-8 prose prose-sm max-w-none text-black print:text-black prose-p:my-1 prose-headings:my-2">
+                {(snapshot?.technique || template?.technique) && (
+                  <section>
+                    <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Técnica</h2>
+                    <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.technique || template?.technique) }} />
+                  </section>
+                )}
+                {(snapshot?.description || template?.description) && (
+                  <section>
+                    <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Resultado</h2>
+                    <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.description || template?.description) }} />
+                  </section>
+                )}
+                {(snapshot?.impression || template?.impression) && (
+                  <section className="pt-2">
+                    <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Impressão</h2>
+                    <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.impression || template?.impression) }} />
+                  </section>
+                )}
+              </div>
+            </>
+          }
 
-            {/* Exam Content */}
-            <div className="space-y-6 mx-8 prose prose-sm max-w-none text-black print:text-black prose-p:my-1 prose-headings:my-2">
-              {(snapshot?.technique || template?.technique) && (
-                <section>
-                  <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Técnica</h2>
-                  <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.technique || template?.technique) }} />
-                </section>
-              )}
-
-              {(snapshot?.description || template?.description) && (
-                <section>
-                  <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Resultado</h2>
-                  <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.description || template?.description) }} />
-                </section>
-              )}
-
-              {(snapshot?.impression || template?.impression) && (
-                <section className="pt-2">
-                  <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Impressão</h2>
-                  <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.impression || template?.impression) }} />
-                </section>
-              )}
-            </div>
-          </div>
-
-          {/* Signature + Footer pinned to bottom via mt-auto */}
-          <div className="mt-auto">
-            {/* Signature */}
-            <div className="px-8 pb-4 break-inside-avoid">
+          signature={
+            <div className="px-8 pb-4">
               {profile?.signature ? (
                 <div
                   className="prose prose-sm max-w-none w-full text-black print:text-black prose-p:my-0 flow-root clear-both"
@@ -241,16 +246,17 @@ export default async function PrintLaudoPage({
                 </div>
               )}
             </div>
+          }
 
-            {/* Footer */}
-            {unit.report_footer && (
+          footer={
+            unit.report_footer ? (
               <div
-                className="px-8 pt-2 pb-8 print:pb-4 prose prose-sm max-w-none text-center text-muted-foreground print:text-black flow-root clear-both"
+                className="px-8 pt-6 pb-8 print:pb-4 prose prose-sm max-w-none text-center text-muted-foreground print:text-black flow-root clear-both"
                 dangerouslySetInnerHTML={{ __html: renderContent(unit.report_footer) }}
               />
-            )}
-          </div>
-        </div>
+            ) : <div /> // Return empty block if no footer to satisfy ReactNode
+          }
+        />
       </div>
     </>
   );
