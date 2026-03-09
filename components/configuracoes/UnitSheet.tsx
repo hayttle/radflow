@@ -114,13 +114,13 @@ export function UnitSheet({ open, onOpenChange, unit }: UnitSheetProps) {
           <div className="space-y-2 pt-4">
             <Label>Cabeçalho para Impressão</Label>
             <p className="text-xs text-muted-foreground mb-2">Este texto/imagem será exibido no topo do laudo impresso.</p>
-            <RichTextEditor value={header} onChange={setHeader} />
+            <RichTextEditor value={header} onChange={setHeader} bucket="units" />
           </div>
 
           <div className="space-y-2 pt-4">
             <Label>Rodapé para Impressão</Label>
             <p className="text-xs text-muted-foreground mb-2">Exibido na parte inferior final do laudo.</p>
-            <RichTextEditor value={footer} onChange={setFooter} />
+            <RichTextEditor value={footer} onChange={setFooter} bucket="units" />
           </div>
 
           <div className="flex gap-2 justify-end pt-4 border-t sticky bottom-0 bg-background py-4">
