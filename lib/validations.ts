@@ -92,6 +92,6 @@ export type SaveExamItemInput = z.infer<typeof SaveExamItemSchema>;
 export const ProfileSchema = z.object({
   full_name: z.string().min(1, "Nome completo é obrigatório"),
   crm: z.string().optional().nullable(),
-  signature_url: z.string().url("URL inválida").optional().or(z.literal("")).nullable(),
+  signature: z.string().optional().nullable(),
 });
 export type ProfileInput = z.infer<typeof ProfileSchema>;

@@ -11,42 +11,13 @@ export async function saveProfile(formData: FormData) {
 
   const fullName = formData.get("full_name") as string;
   const crm = formData.get("crm") as string;
-  const signatureFile = formData.get("signature") as File | null;
+  const signature = formData.get("signature") as string;
 
-  let signatureUrl = formData.get("signature_url") as string | null;
-
-  // Handle file upload if a new file is provided
-  if (signatureFile && signatureFile.size > 0) {
-    const fileExt = signatureFile.name.split('.').pop() || 'png';
-    const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-    const filePath = `${user.id}/${fileName}`;
-
-    // Upload to 'signatures' bucket
-    const { error: uploadError, data: uploadData } = await supabase.storage
-      .from("signatures")
-      .upload(filePath, signatureFile, { upsert: true });
-
-    if (uploadError) {
-      if (uploadError.message.includes("Bucket not found")) {
-        // Fallback: the bucket doesn't exist, we can create it or inform the user
-        // Creating bucket requires admin privileges often, so we return a clear error
-        return { error: "O bucket 'signatures' não foi criado no Supabase. Por favor, crie-o antes de enviar assinaturas." };
-      }
-      return { error: `Erro ao fazer upload da assinatura: ${uploadError.message}` };
-    }
-
-    if (uploadData) {
-      const { data: publicUrlData } = supabase.storage
-        .from("signatures")
-        .getPublicUrl(filePath);
-      signatureUrl = publicUrlData.publicUrl;
-    }
-  }
 
   const rawData = {
     full_name: fullName,
     crm: crm || null,
-    signature_url: signatureUrl || null,
+    signature: signature || null,
   };
 
   const parsed = ProfileSchema.safeParse(rawData);
