@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Save, Loader2, Plus, Trash, GripVertical } from "lucide-react";
 import { saveExamTemplate } from "@/app/(protected)/configuracoes/modelos/actions";
-import type { ExamTemplate, Unit } from "@/types/supabase";
+import type { ExamTemplate } from "@/types/supabase";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Editor } from "@tiptap/react";
 import {
@@ -27,11 +27,16 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 
+interface UnitOption {
+  id: string;
+  name: string;
+}
+
 interface ModelSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   template?: ExamTemplate | null;
-  units: Unit[];
+  units: UnitOption[];
 }
 
 export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetProps) {

@@ -45,11 +45,10 @@ export default async function PacientesPage({
 
   return (
     <PageContainer>
-      <PatientsClient 
-        patients={patients ?? []} 
+      <PatientsClient
+        patients={patients ?? []}
         currentPage={currentPage}
         totalPages={totalPages}
-        initialQuery={q ?? ""}
       />
     </PageContainer>
   );

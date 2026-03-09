@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -53,12 +53,18 @@ export function PatientSheet({
   onUpdated,
 }: PatientSheetProps) {
   const [isPending, setIsPending] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (open) setSubmitError(null);
+  }, [open]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!formRef.current) return;
 
+    setSubmitError(null);
     const formData = new FormData(formRef.current);
     if (patient) {
       formData.append("id", patient.id);
@@ -69,15 +75,15 @@ export function PatientSheet({
       const result = await savePatient(formData, patient?.id);
 
       if (result.error) {
-        if (typeof result.error === "string") {
-          toast.error("Erro", { description: result.error });
-        } else {
-          const msgs = Object.values(result.error).flat().map(String).join(", ");
-          toast.error("Erro de validação", { description: msgs });
-        }
+        const errorMsg =
+          typeof result.error === "string"
+            ? result.error
+            : Object.values(result.error).flat().map(String).join(", ");
+        setSubmitError(errorMsg);
         return;
       }
 
+      setSubmitError(null);
       toast.success(patient ? "Paciente atualizado!" : "Paciente cadastrado!");
 
       if (!patient && result.data && onCreated) {
@@ -109,6 +115,14 @@ export function PatientSheet({
         </SheetHeader>
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 mt-6 pb-6">
+          {submitError && (
+            <div
+              role="alert"
+              className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            >
+              {submitError}
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="name" required>Nome Completo</Label>
             <Input

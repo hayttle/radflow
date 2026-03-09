@@ -42,7 +42,12 @@ export async function savePatient(formData: FormData, patientId?: string) {
       .eq("user_id", user.id)
       .select("id, name, cpf, birth_date, gender, phone, mother_name, notes")
       .single();
-    if (error) return { error: error.message };
+    if (error) {
+      if (error.code === "23505") {
+        return { error: "Já existe um paciente cadastrado com este CPF." };
+      }
+      return { error: error.message };
+    }
     revalidatePath("/pacientes");
     return { success: true, data };
   } else {
@@ -52,7 +57,12 @@ export async function savePatient(formData: FormData, patientId?: string) {
       .insert({ ...parsed.data, user_id: user.id })
       .select("id, name, cpf, birth_date")
       .single();
-    if (error) return { error: error.message };
+    if (error) {
+      if (error.code === "23505") {
+        return { error: "Já existe um paciente cadastrado com este CPF." };
+      }
+      return { error: error.message };
+    }
     revalidatePath("/pacientes");
     return { success: true, data };
   }
