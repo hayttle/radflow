@@ -43,7 +43,7 @@ interface LaudoEditorProps {
   variables: TemplateVariable[];
   patient: { id: string; name: string; birth_date: string | null; cpf: string | null; gender: string | null } | null;
   unit: { id: string; name: string; report_header: string | null; report_footer: string | null } | null;
-  profile: { full_name: string | null; crm: string | null; signature_url: string | null } | null;
+  profile: { full_name: string | null; crm: string | null; signature: string | null } | null;
   phrases: { id: string; category: string; label: string; content: string }[];
 }
 
@@ -76,31 +76,27 @@ export function LaudoEditor({
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
-  const sectionContent: Record<SectionKey, string | null | undefined> = {
-    technique: template?.technique,
-    description: template?.description,
-    impression: template?.impression,
-  };
+  // Helper to process {{variable}} into <span data-variable="..."></span>
+  const processInitialHTML = useCallback((content: string | null | undefined) => {
+    if (!content) return "";
+    return content.replace(/\{\{([^}]+)\}\}/g, (match, varName) => {
+      return `<span data-variable="${varName.trim()}"></span>`;
+    });
+  }, []);
 
-  const getInitialContent = useCallback((section: SectionKey) => {
-    let content = snapshot[section] ?? sectionContent[section] ?? "";
-    
-    // Replace {{variable_name}} with <span data-variable="variable_name"></span>
-    if (content) {
-      content = content.replace(/\{\{([^}]+)\}\}/g, (match, varName) => {
-        return `<span data-variable="${varName.trim()}"></span>`;
-      });
-    }
-
-    return content;
-  }, [snapshot, sectionContent]);
+  // Consolidate all sections into a single state for persistence across tab switches
+  const [contents, setContents] = useState<Record<SectionKey, string>>(() => ({
+    technique: snapshot.technique ?? processInitialHTML(template?.technique),
+    description: snapshot.description ?? processInitialHTML(template?.description),
+    impression: snapshot.impression ?? processInitialHTML(template?.impression),
+  }));
 
   const editor = useEditor({
     extensions: [
       StarterKit,
       VariableExtension.configure({}),
     ],
-    content: getInitialContent("description"),
+    content: contents["description"],
     immediatelyRender: false,
     editorProps: {
       attributes: {
@@ -112,41 +108,60 @@ export function LaudoEditor({
   // Switch section content in editor
   useEffect(() => {
     if (!editor) return;
-    editor.commands.setContent(getInitialContent(activeSection) ?? "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSection]);
 
-  const triggerAutosave = useCallback(() => {
+    // 1. Save current editor content to state before switching (to prevent data loss)
+    // We use a functional update to ensure we have the most recent content from the editor
+    const currentHTML = editor.getHTML();
+    
+    // 2. Load the new section
+    // Use a small delay to avoid flushSync error in React 18 lifecycle
+    const timer = setTimeout(() => {
+      editor.commands.setContent(contents[activeSection] ?? "");
+    }, 0);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSection, editor]);
+
+  const triggerAutosave = useCallback(async () => {
+    if (!editor) return;
+
+    const currentHTML = editor.getHTML();
+    
+    // Update local contents state so it stays in sync
+    setContents(prev => ({
+        ...prev,
+        [activeSection]: currentHTML
+    }));
+
     clearTimeout(autosaveTimer.current);
     autosaveTimer.current = setTimeout(async () => {
-      if (!editor) return;
       const result = await saveExamItem(itemId, {
-        technique: activeSection === "technique" ? editor.getHTML() : snapshot.technique,
-        description: activeSection === "description" ? editor.getHTML() : snapshot.description,
-        impression: activeSection === "impression" ? editor.getHTML() : snapshot.impression,
+        technique: activeSection === "technique" ? currentHTML : contents.technique,
+        description: activeSection === "description" ? currentHTML : contents.description,
+        impression: activeSection === "impression" ? currentHTML : contents.impression,
         variable_selections: selections,
       });
       if (!result?.error) setLastSaved(new Date());
     }, 2000);
-  }, [editor, itemId, activeSection, selections, snapshot]);
+  }, [editor, itemId, activeSection, selections, contents]);
 
   const handleVariableSelect = useCallback((varName: string, value: string) => {
-    setSelections((prev) => {
-      const next = { ...prev, [varName]: value };
-      return next;
-    });
-    // Use a small timeout to let React batch the state update before triggering the save
-    setTimeout(() => {
-        triggerAutosave();
-    }, 0);
-  }, [triggerAutosave]);
+    setSelections((prev) => ({ ...prev, [varName]: value }));
+  }, []);
 
-  // Auto-save on editor change
+  // Auto-save on editor content change
   useEffect(() => {
     if (!editor) return;
     editor.on("update", triggerAutosave);
     return () => { editor.off("update", triggerAutosave); };
   }, [editor, triggerAutosave]);
+
+  // Explicitly trigger save when selections change
+  useEffect(() => {
+    triggerAutosave();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selections]);
 
 
 
@@ -205,7 +220,7 @@ export function LaudoEditor({
               variant="outline"
               size="sm"
               className="gap-1.5"
-              onClick={() => window.open(`/laudos/${requestId}/${itemId}/print`, "_blank")}
+              onClick={() => window.open(`/laudos/${requestId}/${itemId}/imprimir`, "_blank")}
             >
               <Printer className="h-4 w-4" /> Imprimir
             </Button>

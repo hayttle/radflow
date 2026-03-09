@@ -13,6 +13,7 @@ type RequestWithRelations = {
   created_at: string | null;
   patients: { id: string; name: string; cpf: string | null } | null;
   units: { id: string; name: string } | null;
+  exam_items: { id: string }[];
 };
 
 const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "outline"; Icon: React.ElementType }> = {
@@ -25,9 +26,12 @@ export function ExamRequestRow({ request }: { request: RequestWithRelations }) {
   const config = statusConfig[request.status] ?? statusConfig.pending;
   const { Icon } = config;
 
+  const firstItemId = request.exam_items?.[0]?.id;
+  const href = firstItemId ? `/laudos/${request.id}/${firstItemId}` : `/laudos/${request.id}`;
+
   return (
     <Link
-      href={`/laudos/${request.id}`}
+      href={href}
       className="flex items-center gap-4 p-4 rounded-xl border bg-card hover:bg-accent/40 transition-colors group"
     >
       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">

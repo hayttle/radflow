@@ -25,7 +25,7 @@ export default async function PrintLaudoPage({
     .from("exam_items")
     .select(`
       id, form_snapshot, status, completed_at,
-      exam_templates ( id, title, technique, description, impression ),
+      exam_templates ( id, title, technique, description, impression, variables ),
       exam_requests (
         id, date, status, notes,
         patients ( id, name, cpf, birth_date, gender ),
@@ -45,7 +45,7 @@ export default async function PrintLaudoPage({
     patients: Patient | null;
     units: Unit | null;
   };
-  const template = (item.exam_templates as unknown) as ExamTemplate | null;
+  const template = (item.exam_templates as unknown) as (ExamTemplate & { variables: any[] }) | null;
   const patient = request.patients;
   const unit = request.units;
 
@@ -55,11 +55,78 @@ export default async function PrintLaudoPage({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, crm, signature_url")
+    .select("full_name, crm, signature")
     .eq("id", user.id)
     .single();
 
   const snapshot = item.form_snapshot as any;
+  const selections = snapshot?.variable_selections || {};
+  const variables = template?.variables || [];
+
+  // Helper to replace variable placeholders with actual selected values
+  const renderContent = (content: string | null | undefined) => {
+    if (!content) return "";
+
+    // 1. Replace Tiptap spans: <span data-variable="name">...</span>
+    let processed = content.replace(/<span[^>]*data-variable="([^"]+)"[^>]*>([\s\S]*?)<\/span>/g, (match, varName) => {
+      return selections[varName] || variables.find((v: any) => v.name === varName)?.label || `[${varName}]`;
+    });
+
+    // 2. Replace raw braces: {{variable_name}}
+    processed = processed.replace(/\{\{([^}]+)\}\}/g, (match, varName) => {
+      const name = varName.trim();
+      return selections[name] || variables.find((v: any) => v.name === name)?.label || match;
+    });
+
+    // 3. Image Style Consolidation
+    // Identifies <img> tags and merges layout properties into a single style attribute.
+    processed = processed.replace(/<img([^>]*)>/g, (match: string, attrGroup: string) => {
+      // Extract existing attributes
+      const attrs: Record<string, string> = {};
+      const attrRegex = /([a-z0-9-]+)="([^"]*)"/gi;
+      let m;
+      while ((m = attrRegex.exec(attrGroup)) !== null) {
+        attrs[m[1].toLowerCase()] = m[2];
+      }
+
+      const alignment = attrs['data-text-align'] || attrs['align'] || attrs['textalign'];
+      let finalAlignment = alignment || 'left';
+
+      // If no explicit alignment, check style margin
+      const styleAttr = attrs['style'] || "";
+      if (!alignment && styleAttr) {
+        if (styleAttr.includes('margin-left: auto') || styleAttr.includes('0 0 0 auto') || styleAttr.includes('0px 0px 0px auto')) finalAlignment = 'right';
+        else if (styleAttr.includes('margin: 0 auto') || styleAttr.includes('margin: 0px auto')) finalAlignment = 'center';
+      }
+
+      const width = attrs['width'];
+      const height = attrs['height'];
+
+      let margin = "0";
+      if (finalAlignment === "center") margin = "0 auto";
+      else if (finalAlignment === "right") margin = "0 0 0 auto";
+
+      // Build clean consolidated style (NO text-align inside img tag style as per user request)
+      let style = `display: block; margin: ${margin};`;
+      if (width) style += ` width: ${width.endsWith("%") || width.endsWith("px") ? width : width + "px"};`;
+      if (height) style += ` height: ${height.endsWith("%") || height.endsWith("px") ? height : height + "px"};`;
+
+      // Reconstruct tag cleanly
+      let newTag = '<img';
+      const skip = ['style', 'containerstyle', 'wrapperstyle', 'data-text-align', 'textalign', 'align'];
+
+      for (const [key, val] of Object.entries(attrs)) {
+        if (!skip.includes(key)) {
+          newTag += ` ${key}="${val}"`;
+        }
+      }
+
+      newTag += ` data-text-align="${finalAlignment}" align="${finalAlignment}" style="${style}">`;
+      return newTag;
+    });
+
+    return processed;
+  };
 
   // Calculate age
   const age = patient.birth_date
@@ -73,11 +140,11 @@ export default async function PrintLaudoPage({
         <PrintButton />
       </div>
 
-      <div className="print:block w-full max-w-[210mm] min-h-[297mm] bg-white print:shadow-none shadow-xl mx-auto overflow-hidden relative break-inside-avoid">
+      <div className="print:block w-full max-w-[210mm] min-h-[297mm] bg-white print:shadow-none shadow-xl mx-auto overflow-hidden flex flex-col break-inside-avoid">
         {/* Header */}
         {unit.report_header ? (
           <div
-            className="mb-8 p-8 pb-0 prose prose-sm max-w-none prose-img:mx-auto"
+            className="mb-8 p-8 pb-0 prose prose-sm max-w-none prose-img:mx-auto prose-p:my-0 prose-headings:my-0"
             dangerouslySetInnerHTML={{ __html: unit.report_header }}
           />
         ) : (
@@ -108,67 +175,65 @@ export default async function PrintLaudoPage({
           </div>
         </div>
 
-        {/* Content Area */}
-        <div className="min-h-[500px] mt-12 py-4">
+        {/* Content Area - flex-1 fills remaining space, eliminating blank whitespace */}
+        <div className="flex-1 mt-1 py-2">
           {/* Exam Title - Centered, Uppercase, above the body */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-3">
             <h2 className="text-xl font-bold uppercase underline tracking-tight">
               {template?.title || "EXAME"}
             </h2>
           </div>
 
           {/* Exam Content */}
-          <div className="space-y-8 mx-8 prose prose-sm max-w-none text-black print:text-black">
+          <div className="space-y-8 mx-8 prose prose-sm max-w-none text-black print:text-black prose-p:my-1 prose-headings:my-2">
             {(snapshot?.technique || template?.technique) && (
               <section>
-                <h2 className="text-sm font-bold uppercase mb-2 pb-1">Técnica</h2>
-                <div dangerouslySetInnerHTML={{ __html: snapshot?.technique || template?.technique || "" }} />
+                <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Técnica</h2>
+                <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.technique || template?.technique) }} />
               </section>
             )}
- 
+
             {(snapshot?.description || template?.description) && (
               <section>
-                <h2 className="text-sm font-bold uppercase mb-2 pb-1">Resultado</h2>
-                <div dangerouslySetInnerHTML={{ __html: snapshot?.description || template?.description || "" }} />
+                <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Resultado</h2>
+                <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.description || template?.description) }} />
               </section>
             )}
- 
+
             {(snapshot?.impression || template?.impression) && (
               <section className="pt-2">
-                <h2 className="text-sm font-bold uppercase mb-2 pb-1">Impressão</h2>
-                <div dangerouslySetInnerHTML={{ __html: snapshot?.impression || template?.impression || "" }} />
+                <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b print:border-black/10">Impressão</h2>
+                <div dangerouslySetInnerHTML={{ __html: renderContent(snapshot?.impression || template?.impression) }} />
               </section>
             )}
           </div>
         </div>
 
-        {/* Signature Area */}
-        <div className="mt-32 mb-16 flex flex-col items-center text-center mx-8 break-inside-avoid">
-          {profile?.signature_url ? (
-            <div className="h-24 w-64 mb-2 flex items-center justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={profile.signature_url}
-                alt="Assinatura"
-                className="max-h-full max-w-full object-contain mix-blend-multiply"
+        {/* Signature + Footer pinned to bottom via mt-auto */}
+        <div className="mt-auto">
+          {/* Signature */}
+          <div className="px-8 pb-4 break-inside-avoid">
+            {profile?.signature ? (
+              <div
+                className="prose prose-sm max-w-none w-full text-black print:text-black prose-img:inline prose-p:my-0"
+                dangerouslySetInnerHTML={{ __html: profile.signature }}
               />
-            </div>
-          ) : (
-            <div className="h-24 w-64 mb-2 flex items-center justify-center opacity-0">.</div>
-          )}
-          <div className="border-t border-black w-72 pt-2 mt-2">
-            <p className="font-semibold">{profile?.full_name || "Médico Responsável"}</p>
-            {profile?.crm && <p className="text-sm text-muted-foreground print:text-black">CRM: {profile.crm}</p>}
+            ) : (
+              <div className="border-t border-black w-72 pt-2 mt-2">
+                <p className="font-semibold">{profile?.full_name || "Médico Responsável"}</p>
+                {profile?.crm && <p className="text-sm text-muted-foreground print:text-black">CRM: {profile.crm}</p>}
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* Footer */}
-        {unit.report_footer && (
-          <div
-            className="mt-16 mx-8 pt-4 pb-8 prose prose-sm max-w-none text-center text-muted-foreground print:text-black prose-img:mx-auto absolute bottom-0 left-0 right-0 border-t border-muted-foreground/20 print:border-black/20"
-            dangerouslySetInnerHTML={{ __html: unit.report_footer }}
-          />
-        )}
+          {/* Footer */}
+          {unit.report_footer && (
+            <div
+              className="px-8 pt-2 pb-6 prose prose-sm max-w-none text-center text-muted-foreground print:text-black prose-img:mx-auto"
+              dangerouslySetInnerHTML={{ __html: unit.report_footer }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

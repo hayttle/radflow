@@ -138,6 +138,18 @@ export async function saveExamItem(
     return { error: error.message };
   }
 
+  // Fetch the requestId to revalidate correctly
+  const { data: item } = await supabase
+    .from("exam_items")
+    .select("request_id")
+    .eq("id", itemId)
+    .single();
+
+  if (item) {
+    revalidatePath(`/laudos/${item.request_id}/${itemId}`);
+  }
+  revalidatePath("/laudos");
+
   // Mirror the report snapshot to exam_reports table
   try {
     await upsertExamReport(itemId, formSnapshot);

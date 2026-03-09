@@ -36,7 +36,8 @@ export default async function LaudosPage({ searchParams }: PageProps) {
       `
       id, status, date, notes, created_at,
       patients ( id, name, cpf ),
-      units ( id, name )
+      units ( id, name ),
+      exam_items ( id )
     `,
       { count: "exact" }
     )

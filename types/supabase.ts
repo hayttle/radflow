@@ -252,7 +252,7 @@ export type Database = {
           full_name: string | null
           id: string
           role: string
-          signature_url: string | null
+          signature: string | null
           updated_at: string
         }
         Insert: {
@@ -262,7 +262,7 @@ export type Database = {
           full_name?: string | null
           id: string
           role?: string
-          signature_url?: string | null
+          signature?: string | null
           updated_at?: string
         }
         Update: {
@@ -272,7 +272,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           role?: string
-          signature_url?: string | null
+          signature?: string | null
           updated_at?: string
         }
         Relationships: []

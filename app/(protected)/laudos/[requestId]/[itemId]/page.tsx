@@ -48,7 +48,7 @@ export default async function EditorPage({ params }: PageProps) {
   // Fetch profile for signature
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, crm, signature_url")
+    .select("full_name, crm, signature")
     .eq("id", user.id)
     .single();
 
