@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/lib/supabase/client";
-import { LogOut, Settings, User } from "lucide-react";
+import { CreditCard, LogOut, Settings, User } from "lucide-react";
 
 interface UserProfileProps {
   userEmail?: string;
@@ -78,9 +78,9 @@ export function UserProfile({ userEmail, userName, avatarUrl, variant = "default
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href="/configuracoes/perfil" className="flex cursor-pointer items-center">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Configurações</span>
+            <Link href="/configuracoes/plano" className="flex cursor-pointer items-center">
+              <CreditCard className="mr-2 h-4 w-4" />
+              <span>Plano e Faturamento</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>

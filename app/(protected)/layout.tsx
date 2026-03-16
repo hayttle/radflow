@@ -43,7 +43,7 @@ async function AuthWrapper({ children }: { children: React.ReactNode }) {
           <header className="flex h-16 shrink-0 items-center justify-between border-b px-6 bg-background sticky top-0 z-10 w-full">
             <SidebarTrigger />
             <div className="flex items-center gap-3">
-              <span className="hidden md:inline-block text-sm font-medium text-muted-foreground mr-1">
+              <span className="hidden lg:inline-block text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                 Unidade de Trabalho:
               </span>
               <UnitSwitcher />

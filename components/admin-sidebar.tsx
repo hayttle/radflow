@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   CreditCard,
   ArrowLeft,
+  Package,
 } from "lucide-react";
 
 const adminNav = [
@@ -43,10 +44,14 @@ const adminNav = [
     icon: MessageSquare,
   },
   {
-    label: "Planos (Breve)",
+    label: "Planos",
     href: "/admin/planos",
+    icon: Package,
+  },
+  {
+    label: "Assinaturas",
+    href: "/admin/assinaturas",
     icon: CreditCard,
-    disabled: true,
   },
 ];
 
@@ -81,25 +86,17 @@ export function AdminSidebar({ userEmail, userName, avatarUrl }: AdminSidebarPro
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="px-2">
-              {adminNav.map(({ label, href, icon: Icon, disabled }) => (
+              {adminNav.map(({ label, href, icon: Icon }) => (
                 <SidebarMenuItem key={href}>
                   <SidebarMenuButton
-                    asChild={!disabled}
+                    asChild
                     isActive={isActive(href)}
-                    disabled={disabled}
                     className="py-6 transition-all duration-300 data-[active=true]:bg-orange-600/10 data-[active=true]:text-orange-600 hover:bg-orange-600/5 group"
                   >
-                    {disabled ? (
-                      <div className="flex items-center opacity-50 cursor-not-allowed w-full">
-                        <Icon className="h-5 w-5" />
-                        <span className="text-base font-medium ml-3">{label}</span>
-                      </div>
-                    ) : (
-                      <Link href={href} className="flex items-center">
-                        <Icon className="h-5 w-5 transition-transform group-hover:scale-110" />
-                        <span className="text-base font-medium ml-3">{label}</span>
-                      </Link>
-                    )}
+                    <Link href={href} className="flex items-center">
+                      <Icon className="h-5 w-5 transition-transform group-hover:scale-110" />
+                      <span className="text-base font-medium ml-3">{label}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

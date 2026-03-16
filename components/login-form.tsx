@@ -16,10 +16,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
+  redirectTo?: string;
+}
+
 export function LoginForm({
   className,
+  redirectTo,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -66,12 +71,14 @@ export function LoginForm({
         return;
       }
 
-      // Redireciona com base no papel
-      if (profile.role === "super_admin") {
-        router.push("/admin");
-      } else {
-        router.push("/dashboard");
-      }
+      // Redireciona: redirect seguro > papel do usuário
+      const target =
+        redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+          ? redirectTo
+          : profile.role === "super_admin"
+            ? "/admin"
+            : "/dashboard";
+      router.push(target);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Ocorreu um erro inesperado");
     } finally {

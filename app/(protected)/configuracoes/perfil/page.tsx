@@ -20,10 +20,14 @@ export default async function ProfileSettingsPage() {
 
   return (
     <PageContainer>
-      <div className="mb-8">
-        <PageHeader title="Perfil" description="Configure seus dados pessoais e segurança da conta" />
+      <PageHeader 
+        title="Perfil do Usuário" 
+        description="Gerencie suas informações pessoais e segurança da conta." 
+      />
+      
+      <div className="max-w-4xl">
+        <ProfileForm profile={profile} userEmail={user.email ?? undefined} />
       </div>
-      <ProfileForm profile={profile} userEmail={user.email ?? undefined} />
     </PageContainer>
   );
 }

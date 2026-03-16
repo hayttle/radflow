@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { Navbar } from "@/components/landing-page/Navbar"
 import { Hero } from "@/components/landing-page/Hero"
 import { ProblemSolution } from "@/components/landing-page/ProblemSolution"
@@ -7,8 +8,28 @@ import { FAQ } from "@/components/landing-page/FAQ"
 import { FinalCTA } from "@/components/landing-page/FinalCTA"
 import { Footer } from "@/components/landing-page/Footer"
 import { JsonLd } from "@/components/seo/JsonLd"
+import { getAvailablePlans } from "@/lib/plans"
 
-export default function Home() {
+async function PricingWrapper() {
+  const plans = await getAvailablePlans();
+  return <Pricing plans={plans} />;
+}
+
+function PricingFallback() {
+  return (
+    <div className="container py-24 space-y-8 animate-pulse">
+      <div className="h-10 w-48 bg-muted rounded mx-auto" />
+      <div className="h-6 w-96 bg-muted rounded mx-auto" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-[500px] bg-muted rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default async function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -40,7 +61,9 @@ export default function Home() {
       <Hero />
       <ProblemSolution />
       <Features />
-      <Pricing />
+      <Suspense fallback={<PricingFallback />}>
+        <PricingWrapper />
+      </Suspense>
       <FAQ />
       <FinalCTA />
       <Footer />

@@ -61,14 +61,14 @@ const configNav = [
     icon: Scan,
   },
   {
-    label: "Assinatura",
-    href: "/configuracoes/assinatura",
-    icon: Signature,
-  },
-  {
     label: "Frases Padrão",
     href: "/configuracoes/frases",
     icon: MessageSquareQuote,
+  },
+  {
+    label: "Assinatura",
+    href: "/configuracoes/assinatura",
+    icon: Signature,
   },
 ];
 

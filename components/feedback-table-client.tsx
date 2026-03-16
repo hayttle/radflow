@@ -16,8 +16,21 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+interface FeedbackItem {
+  id: string;
+  type: "bug" | "suggestion" | "critique" | "feature_request";
+  title: string;
+  description: string;
+  status: "pending" | "viewed" | "resolved";
+  created_at: string;
+  profiles?: {
+    full_name: string | null;
+    email: string;
+  };
+}
+
 interface FeedbackTableClientProps {
-  feedbacks: any[];
+  feedbacks: FeedbackItem[];
 }
 
 export function FeedbackTableClient({ feedbacks }: FeedbackTableClientProps) {
@@ -25,14 +38,14 @@ export function FeedbackTableClient({ feedbacks }: FeedbackTableClientProps) {
     {
       key: "type",
       label: "Tipo",
-      render: (row: any) => {
-        const typeLabels: any = {
+      render: (row: FeedbackItem) => {
+        const typeLabels: Record<string, string> = {
           bug: "Bug",
           suggestion: "Sugestão",
           critique: "Crítica",
           feature_request: "Funcionalidade",
         };
-        const typeColors: any = {
+        const typeColors: Record<string, "destructive" | "secondary" | "outline" | "default"> = {
           bug: "destructive",
           suggestion: "secondary",
           critique: "outline",
@@ -44,7 +57,7 @@ export function FeedbackTableClient({ feedbacks }: FeedbackTableClientProps) {
     {
       key: "content",
       label: "Mensagem",
-      render: (row: any) => (
+      render: (row: FeedbackItem) => (
         <div className="flex flex-col max-w-[400px]">
           <span className="font-semibold text-foreground truncate">{row.title}</span>
           <span className="text-xs text-muted-foreground line-clamp-1">{row.description}</span>
@@ -54,7 +67,7 @@ export function FeedbackTableClient({ feedbacks }: FeedbackTableClientProps) {
     {
       key: "user",
       label: "Autor",
-      render: (row: any) => (
+      render: (row: FeedbackItem) => (
         <div className="flex flex-col">
           <span className="text-sm font-medium">{row.profiles?.full_name || "Usuário"}</span>
           <span className="text-[10px] text-muted-foreground">{row.profiles?.email}</span>
@@ -64,14 +77,14 @@ export function FeedbackTableClient({ feedbacks }: FeedbackTableClientProps) {
     {
       key: "status",
       label: "Status",
-      render: (row: any) => (
+      render: (row: FeedbackItem) => (
         <FeedbackStatusSwitcher feedbackId={row.id} currentStatus={row.status} />
       ),
     },
     {
       key: "actions",
       label: "Ações",
-      render: (row: any) => (
+      render: (row: FeedbackItem) => (
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-orange-600">

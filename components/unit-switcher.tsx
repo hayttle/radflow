@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useUnit } from "@/contexts/unit-context";
 import {
   Select,
@@ -17,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Building2 } from "lucide-react";
+import { Building2, PlusCircle } from "lucide-react";
 import { useState } from "react";
 import type { Unit } from "@/types/supabase";
 
@@ -26,7 +27,21 @@ export function UnitSwitcher() {
   const [pendingUnit, setPendingUnit] = useState<Unit | null>(null);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  if (units.length === 0) return null;
+  if (units.length === 0) {
+    return (
+      <Button 
+        variant="outline" 
+        size="sm" 
+        asChild
+        className="h-9 gap-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 text-primary transition-all animate-pulse"
+      >
+        <Link href="/configuracoes/unidades">
+          <PlusCircle className="h-4 w-4" />
+          <span>Cadastrar Unidade</span>
+        </Link>
+      </Button>
+    );
+  }
 
   const handleValueChange = (id: string) => {
     const unit = units.find((u) => u.id === id) ?? null;

@@ -5,6 +5,7 @@ import { Save, Loader2, User, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { saveProfile, updatePassword } from "./actions";
 import type { Profile } from "@/types/supabase";
@@ -57,58 +58,63 @@ export function ProfileForm({ profile, userEmail }: ProfileFormProps) {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="bg-card border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b bg-muted/20">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-primary/10 text-primary rounded-xl">
+    <div className="space-y-8">
+      {/* Personal Information */}
+      <Card className="border-2 border-primary/10 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/20 border-b pb-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary/10 text-primary rounded-2xl">
               <User className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Informações Pessoais</h2>
-              <p className="text-sm text-muted-foreground">Gerencie seus dados de perfil.</p>
+              <CardTitle className="text-xl font-bold">Informações Pessoais</CardTitle>
+              <CardDescription>Gerencie seus dados de identificação e registro profissional.</CardDescription>
             </div>
           </div>
-        </div>
+        </CardHeader>
 
-        <form ref={formRef} onSubmit={onSubmit} className="p-6 space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form ref={formRef} onSubmit={onSubmit}>
+          <CardContent className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="full_name" className="font-semibold" required>Nome Completo</Label>
+                <Input
+                  id="full_name"
+                  name="full_name"
+                  defaultValue={profile?.full_name ?? ""}
+                  placeholder="Seu nome completo"
+                  className="rounded-xl h-11"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="crm" className="font-semibold">CRM / Registro Profissional</Label>
+                <Input
+                  id="crm"
+                  name="crm"
+                  defaultValue={profile?.crm ?? ""}
+                  placeholder="Ex: CRM-SP 123456"
+                  className="rounded-xl h-11"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="full_name" required>Nome Completo</Label>
+              <Label htmlFor="email" className="font-semibold text-muted-foreground">E-mail de Acesso</Label>
               <Input
-                id="full_name"
-                name="full_name"
-                defaultValue={profile?.full_name ?? ""}
-                placeholder="Dr. João da Silva"
-                required
+                id="email"
+                type="email"
+                value={userEmail ?? ""}
+                readOnly
+                disabled
+                className="bg-muted/50 rounded-xl h-11 cursor-not-allowed"
               />
+              <p className="text-[13px] text-muted-foreground font-medium">O e-mail é vinculado à sua conta e não pode ser alterado aqui.</p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="crm">CRM / Registro Profissional</Label>
-              <Input
-                id="crm"
-                name="crm"
-                defaultValue={profile?.crm ?? ""}
-                placeholder="CRM-SP 123456"
-              />
-            </div>
-          </div>
+          </CardContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">E-mail</Label>
-            <Input
-              id="email"
-              type="email"
-              value={userEmail ?? ""}
-              readOnly
-              disabled
-              className="bg-muted"
-            />
-            <p className="text-xs text-muted-foreground">O e-mail é vinculado à conta e não pode ser alterado aqui.</p>
-          </div>
-
-          <div className="pt-6 border-t flex justify-end">
-            <Button type="submit" disabled={isPending} className="min-w-32">
+          <CardFooter className="bg-slate-50/50 dark:bg-slate-900/20 border-t px-6 py-4 flex justify-end">
+            <Button type="submit" disabled={isPending} className="rounded-full px-8 font-bold shadow-md">
               {isPending ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
@@ -116,61 +122,66 @@ export function ProfileForm({ profile, userEmail }: ProfileFormProps) {
               )}
               {profile ? "Salvar Alterações" : "Concluir Cadastro"}
             </Button>
-          </div>
+          </CardFooter>
         </form>
-      </div>
+      </Card>
 
-      <div className="bg-card border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b bg-muted/20">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-primary/10 text-primary rounded-xl">
+      {/* Security / Password */}
+      <Card className="border-2 border-primary/10 shadow-sm overflow-hidden">
+        <CardHeader className="bg-muted/20 border-b pb-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary/10 text-primary rounded-2xl">
               <KeyRound className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Alterar Senha</h2>
-              <p className="text-sm text-muted-foreground">Defina uma nova senha para acessar sua conta.</p>
+              <CardTitle className="text-xl font-bold">Segurança da Conta</CardTitle>
+              <CardDescription>Mantenha sua conta protegida atualizando sua senha regularmente.</CardDescription>
             </div>
           </div>
-        </div>
+        </CardHeader>
 
-        <form onSubmit={onPasswordSubmit} className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="password" required>Nova Senha</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Mínimo 6 caracteres"
-                required
-                minLength={6}
-              />
+        <form onSubmit={onPasswordSubmit}>
+          <CardContent className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="password" className="font-semibold" required>Nova Senha</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Mínimo 6 caracteres"
+                  className="rounded-xl h-11"
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm_password" className="font-semibold" required>Confirmar Nova Senha</Label>
+                <Input
+                  id="confirm_password"
+                  name="confirm_password"
+                  type="password"
+                  placeholder="Repita a nova senha"
+                  className="rounded-xl h-11"
+                  required
+                  minLength={6}
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm_password" required>Confirmar Senha</Label>
-              <Input
-                id="confirm_password"
-                name="confirm_password"
-                type="password"
-                placeholder="Repita a nova senha"
-                required
-                minLength={6}
-              />
-            </div>
-          </div>
+          </CardContent>
 
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isPasswordPending} variant="secondary" className="min-w-32">
+          <CardFooter className="bg-slate-50/50 dark:bg-slate-900/20 border-t px-6 py-4 flex justify-end">
+            <Button type="submit" disabled={isPasswordPending} variant="secondary" className="rounded-full px-8 font-bold border shadow-sm">
               {isPasswordPending ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
                 <KeyRound className="h-4 w-4 mr-2" />
               )}
-              Alterar Senha
+              Atualizar Senha
             </Button>
-          </div>
+          </CardFooter>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }
