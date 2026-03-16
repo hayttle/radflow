@@ -78,17 +78,19 @@ export default async function LaudosPage({searchParams}: PageProps) {
   const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE)
 
   return (
-    <PageContainer>
-      <LaudosUnitSync />
-      <div className="flex items-center justify-between">
-        <PageHeader title="Laudos" description="Atendimentos e laudos radiológicos" />
-        <Button asChild>
+    <PageContainer
+      title="Laudos"
+      description="Atendimentos e laudos radiológicos"
+      actions={
+        <Button asChild className="shrink-0 rounded-full shadow-md">
           <Link href="/laudos/novo">
             <Plus className="h-4 w-4 mr-2" />
             Novo Laudo
           </Link>
         </Button>
-      </div>
+      }
+    >
+      <LaudosUnitSync />
 
       <div className="mt-6">
         <DataFilter statusOptions={STATUS_OPTIONS} showDateRange />

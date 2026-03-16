@@ -103,16 +103,16 @@ export function PhrasesClient({ phrases, categories }: PhrasesClientProps) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <PageHeader
-          title="Frases Padrão"
-          description="Crie blocos de texto rápido para utilizar durante os laudos"
-        />
-        <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
-          <Plus className="h-4 w-4 mr-2" />
-          Nova Frase
-        </Button>
-      </div>
+      <PageHeader
+        title="Frases Padrão"
+        description="Crie blocos de texto rápido para utilizar durante os laudos"
+        actions={
+          <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Frase
+          </Button>
+        }
+      />
 
       <div className="mt-6">
         <PhrasesFilter categories={categories} />

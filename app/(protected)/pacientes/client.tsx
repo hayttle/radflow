@@ -109,16 +109,16 @@ export function PatientsClient({
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <PageHeader
-          title="Pacientes"
-          description="Gestão de cadastros e histórico"
-        />
-        <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Paciente
-        </Button>
-      </div>
+      <PageHeader
+        title="Pacientes"
+        description="Gestão de cadastros e histórico"
+        actions={
+          <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Paciente
+          </Button>
+        }
+      />
 
       <div className="mt-6">
         <PatientsFilter />

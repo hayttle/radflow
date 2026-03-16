@@ -59,15 +59,18 @@ export default async function DashboardPage() {
 
   return (
     <PageContainer>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-        <PageHeader title="Painel de Controle" description="Visão geral dos seus laudos e produtividade." />
-        <Button asChild className="shrink-0 rounded-full shadow-md group">
-          <Link href="/laudos/novo">
-            <FilePlus2 className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-            Novo Laudo
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title="Painel de Controle"
+        description="Visão geral dos seus laudos e produtividade."
+        actions={
+          <Button asChild className="shrink-0 rounded-full shadow-md group">
+            <Link href="/laudos/novo">
+              <FilePlus2 className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+              Novo Laudo
+            </Link>
+          </Button>
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-3 mb-8">
         <Card className="bg-gradient-to-br from-card to-muted/20 border shadow-sm">

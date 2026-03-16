@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/page-header";
 import { FeedbackTableClient } from "@/components/feedback-table-client";
 import { FeedbackKanbanClient } from "@/components/feedback-kanban-client";
-import { MessageSquare, LayoutGrid, List } from "lucide-react";
+import { LayoutGrid, List } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const metadata = { title: "Gerenciar Feedbacks | Admin" };
@@ -22,28 +23,22 @@ export default async function FeedbacksPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500 pb-10">
       <Tabs defaultValue="kanban" className="w-full">
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
-          <div className="flex items-start gap-4">
-            <div className="p-2.5 rounded-xl bg-orange-600/10 text-orange-600 border border-orange-600/10 shadow-sm">
-              <MessageSquare className="h-6 w-6" />
-            </div>
-            <div className="flex flex-col">
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Feedbacks e Suporte</h1>
-              <p className="text-muted-foreground text-sm mt-1">Acompanhe as necessidades e sugestões dos usuários.</p>
-            </div>
-          </div>
-
-          <TabsList className="grid w-full md:w-[220px] grid-cols-2 h-10 bg-muted/30 p-1 border rounded-xl shadow-sm">
-            <TabsTrigger value="table" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all h-full">
-              <List className="h-4 w-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Lista</span>
-            </TabsTrigger>
-            <TabsTrigger value="kanban" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all h-full">
-              <LayoutGrid className="h-4 w-4" />
-              <span className="text-[10px] font-bold uppercase tracking-widest">Kanban</span>
-            </TabsTrigger>
-          </TabsList>
-        </div>
+        <PageHeader
+          title="Feedbacks e Suporte"
+          description="Acompanhe as necessidades e sugestões dos usuários."
+          actions={
+            <TabsList className="grid w-full md:w-[220px] grid-cols-2 h-10 bg-muted/30 p-1 border rounded-xl shadow-sm">
+              <TabsTrigger value="table" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all h-full">
+                <List className="h-4 w-4" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Lista</span>
+              </TabsTrigger>
+              <TabsTrigger value="kanban" className="flex items-center gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-lg transition-all h-full">
+                <LayoutGrid className="h-4 w-4" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">Kanban</span>
+              </TabsTrigger>
+            </TabsList>
+          }
+        />
 
         <TabsContent value="table" className="m-0 focus-visible:outline-none">
           <div className="p-1 bg-gradient-to-br from-orange-600/10 via-transparent to-orange-600/10 rounded-2xl">

@@ -141,16 +141,16 @@ export function ModelsClient({
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <PageHeader
-          title="Modelos de Exame"
-          description="Crie templates de laudos padronizados com variáveis dinâmicas"
-        />
-        <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Modelo
-        </Button>
-      </div>
+      <PageHeader
+        title="Modelos de Exame"
+        description="Crie templates de laudos padronizados com variáveis dinâmicas"
+        actions={
+          <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
+            <Plus className="h-4 w-4 mr-2" />
+            Novo Modelo
+          </Button>
+        }
+      />
 
       <div className="mt-6">
         <ModelsFilter units={units} />

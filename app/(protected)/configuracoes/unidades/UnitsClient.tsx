@@ -36,13 +36,16 @@ export function UnitsClient({ units }: { units: Unit[] }) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-        <PageHeader title="Unidades de Atendimento" description="Gerencie as clínicas atendidas e os cabeçalhos de laudos" />
-        <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
-          <Plus className="h-4 w-4 mr-2" />
-          Nova Unidade
-        </Button>
-      </div>
+      <PageHeader
+        title="Unidades de Atendimento"
+        description="Gerencie as clínicas atendidas e os cabeçalhos de laudos"
+        actions={
+          <Button onClick={handleNew} className="shrink-0 rounded-full shadow-md">
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Unidade
+          </Button>
+        }
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {units.length === 0 ? (

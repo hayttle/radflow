@@ -27,7 +27,7 @@ export function PageContainer({
     <div className={`${baseClasses} ${className || ""}`} {...props}>
       {(title || description || actions) && (
         <div className="space-y-8 mb-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
               {title && <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">{title}</h1>}
               {description && (
