@@ -1,11 +1,13 @@
 import { LoginForm } from "@/components/login-form";
+import { AuthLayoutWrapper } from "@/components/auth-layout-wrapper";
 
 export default function Page() {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <LoginForm />
-      </div>
-    </div>
+    <AuthLayoutWrapper 
+      title="Bem-vindo de volta" 
+      description="Entre com suas credenciais para acessar sua conta"
+    >
+      <LoginForm />
+    </AuthLayoutWrapper>
   );
 }

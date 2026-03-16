@@ -1,11 +1,13 @@
 import { SignUpForm } from "@/components/sign-up-form";
+import { AuthLayoutWrapper } from "@/components/auth-layout-wrapper";
 
 export default function Page() {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <SignUpForm />
-      </div>
-    </div>
+    <AuthLayoutWrapper 
+      title="Crie sua conta" 
+      description="Comece hoje mesmo a transformar seu fluxo de trabalho"
+    >
+      <SignUpForm />
+    </AuthLayoutWrapper>
   );
 }
