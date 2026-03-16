@@ -57,7 +57,7 @@ export function FeedbackStatusSwitcher({ feedbackId, currentStatus }: FeedbackSt
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="pending">Pendente</SelectItem>
-          <SelectItem value="viewed">Visualizado</SelectItem>
+          <SelectItem value="viewed">Em Análise</SelectItem>
           <SelectItem value="resolved">Resolvido</SelectItem>
         </SelectContent>
       </Select>

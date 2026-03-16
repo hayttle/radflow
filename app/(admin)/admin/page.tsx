@@ -137,9 +137,9 @@ export default async function AdminDashboardPage() {
                       <div className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         feedback.status === "pending" ? "bg-orange-100 text-orange-700" :
                         feedback.status === "resolved" ? "bg-emerald-100 text-emerald-700" :
-                        "bg-muted text-muted-foreground"
+                        "bg-blue-100 text-blue-700"
                       }`}>
-                        {feedback.status === "pending" ? "Pendente" : feedback.status === "resolved" ? "Resolvido" : "Visualizado"}
+                        {feedback.status === "pending" ? "Pendente" : feedback.status === "resolved" ? "Resolvido" : "Em Análise"}
                       </div>
                       <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-muted-foreground hover:text-foreground">
                         <Link href={`/admin/feedbacks?id=${feedback.id}`}>
