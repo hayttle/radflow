@@ -33,15 +33,47 @@ export function LoginForm({
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/dashboard");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+
+      if (error) {
+        setError("Email ou senha inválidos.");
+        return;
+      }
+
+      if (!data.user) {
+        setError("Usuário não encontrado.");
+        return;
+      }
+
+      // Check if user is active and their role
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("role, is_active")
+        .eq("id", data.user.id)
+        .single();
+
+      if (profileError) {
+        setError("Erro ao verificar perfil do usuário.");
+        return;
+      }
+
+      if (profile.is_active === false) {
+        await supabase.auth.signOut();
+        setError("Sua conta está inativa. Entre em contato com o administrador.");
+        return;
+      }
+
+      // Redireciona com base no papel
+      if (profile.role === "super_admin") {
+        router.push("/admin");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Ocorreu um erro inesperado");
     } finally {
       setIsLoading(false);
     }
