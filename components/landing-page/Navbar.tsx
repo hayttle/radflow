@@ -8,20 +8,21 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 border-b border-white/10 bg-background/60 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
             <span className="text-primary-foreground font-bold italic">RF</span>
           </div>
           <span className="text-xl font-bold tracking-tight">
             Rad<span className="text-primary">Flow</span>
           </span>
-        </div>
+        </Link>
         
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <Link href="#problema" className="hover:text-primary transition-colors">Problema</Link>
-          <Link href="#solucao" className="hover:text-primary transition-colors">Solução</Link>
-          <Link href="#recursos" className="hover:text-primary transition-colors">Recursos</Link>
-          <Link href="#faq" className="hover:text-primary transition-colors">FAQ</Link>
+          <Link href="/#problema" className="hover:text-primary transition-colors">Problema</Link>
+          <Link href="/#solucao" className="hover:text-primary transition-colors">Solução</Link>
+          <Link href="/#recursos" className="hover:text-primary transition-colors">Recursos</Link>
+          <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
+          <Link href="/#faq" className="hover:text-primary transition-colors">FAQ</Link>
         </div>
 
         <div className="flex items-center gap-4">
