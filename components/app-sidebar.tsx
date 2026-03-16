@@ -26,7 +26,10 @@ import {
   Signature,
   Activity,
   LayoutDashboard,
+  MessageSquarePlus,
 } from "lucide-react";
+import { useState } from "react";
+import { FeedbackModal } from "./feedback-modal";
 
 const mainNav = [
   {
@@ -77,6 +80,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ userEmail, userName, avatarUrl }: AppSidebarProps) {
   const pathname = usePathname();
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
@@ -139,6 +143,26 @@ export function AppSidebar({ userEmail, userName, avatarUrl }: AppSidebarProps) 
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* AJUDA / FEEDBACK */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Suporte
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="px-2">
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => setShowFeedbackModal(true)}
+                  className="py-4 transition-all duration-200 hover:bg-primary/5 text-muted-foreground hover:text-primary"
+                >
+                  <MessageSquarePlus className="h-4 w-4" />
+                  <span className="text-sm font-medium ml-3">Enviar Feedback</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t">
@@ -154,6 +178,11 @@ export function AppSidebar({ userEmail, userName, avatarUrl }: AppSidebarProps) 
           <ThemeSwitcher />
         </div>
       </SidebarFooter>
+
+      <FeedbackModal
+        open={showFeedbackModal}
+        onOpenChange={setShowFeedbackModal}
+      />
     </Sidebar>
   );
 }

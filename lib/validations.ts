@@ -95,3 +95,13 @@ export const ProfileSchema = z.object({
   signature: z.string().optional().nullable(),
 });
 export type ProfileInput = z.infer<typeof ProfileSchema>;
+
+// ============================================================
+// FEEDBACK
+// ============================================================
+export const FeedbackSchema = z.object({
+  type: z.enum(["bug", "suggestion", "critique", "feature_request"]),
+  title: z.string().min(1, "Título é obrigatório").max(200),
+  description: z.string().min(1, "Descrição é obrigatória").max(2000),
+});
+export type FeedbackInput = z.infer<typeof FeedbackSchema>;
