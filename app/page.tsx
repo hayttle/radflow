@@ -2,6 +2,7 @@ import { Navbar } from "@/components/landing-page/Navbar"
 import { Hero } from "@/components/landing-page/Hero"
 import { ProblemSolution } from "@/components/landing-page/ProblemSolution"
 import { Features } from "@/components/landing-page/Features"
+import { Pricing } from "@/components/landing-page/Pricing"
 import { FAQ } from "@/components/landing-page/FAQ"
 import { FinalCTA } from "@/components/landing-page/FinalCTA"
 import { Footer } from "@/components/landing-page/Footer"
@@ -39,6 +40,7 @@ export default function Home() {
       <Hero />
       <ProblemSolution />
       <Features />
+      <Pricing />
       <FAQ />
       <FinalCTA />
       <Footer />
