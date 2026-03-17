@@ -37,7 +37,8 @@ export function OnboardingChecklist({ steps }: OnboardingChecklistProps) {
   const mandatorySteps = steps.filter(s => !s.isOptional);
   const allMandatoryCompleted = mandatorySteps.every(s => s.isCompleted);
 
-  if (allMandatoryCompleted && progress === 100) return null;
+
+  if (allMandatoryCompleted) return null;
 
   return (
     <Card className="relative overflow-hidden border-none bg-gradient-to-br from-primary/10 via-background to-primary/5 shadow-2xl group transition-all duration-500">

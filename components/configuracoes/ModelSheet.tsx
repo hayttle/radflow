@@ -43,7 +43,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
   const [isPending, startTransition] = useTransition();
 
   const [title, setTitle] = useState("");
-  const [unitId, setUnitId] = useState<string>("all");
+  const [unitId, setUnitId] = useState<string>("");
   const [active, setActive] = useState(true);
 
   const [technique, setTechnique] = useState("");
@@ -70,7 +70,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
   useEffect(() => {
     if (open) {
       setTitle(template?.title ?? "");
-      setUnitId(template?.unit_id ?? "all");
+      setUnitId(template?.unit_id ?? (units[0]?.id ?? ""));
       setActive(template?.active ?? true);
       setTechnique(template?.technique ?? "");
       setDescription(template?.description ?? "");
@@ -147,7 +147,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
 
     const payload = {
       title,
-      unit_id: unitId === "all" ? null : unitId,
+      unit_id: unitId,
       active,
       technique,
       description,
@@ -206,13 +206,12 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
                 />
               </div>
               <div className="space-y-2">
-                <Label>Unidade Atendida</Label>
+                <Label required>Unidade Atendida</Label>
                 <Select value={unitId} onValueChange={setUnitId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Todas as unidades" />
+                    <SelectValue placeholder="Selecione a unidade" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas as unidades (Comum)</SelectItem>
                     {units.map((u) => (
                       <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
                     ))}
@@ -290,13 +289,13 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
             </div>
 
             <div className="space-y-2">
-              <Label>Descrição</Label>
+              <Label>Resultados</Label>
               <VariableChips onInsert={(name) => insertVariable(descEditor, name)} />
               <RichTextEditor value={description} onChange={setDescription} onReady={setDescEditor} />
             </div>
 
             <div className="space-y-2">
-              <Label>Impressão Mínima</Label>
+              <Label>Impressão Diagnóstica</Label>
               <VariableChips onInsert={(name) => insertVariable(impEditor, name)} />
               <RichTextEditor value={impression} onChange={setImpression} onReady={setImpEditor} />
             </div>
