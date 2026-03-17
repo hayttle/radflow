@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { ExternalLink, Clock, CheckCircle2, AlertCircle, Printer, Eye } from "lucide-react";
 import { DataTable } from "@/components/data-table";
 import type { DataTableColumn } from "@/components/data-table";
 
@@ -72,12 +72,27 @@ const COLUMNS: DataTableColumn<LaudoRequestRow>[] = [
         ? `/laudos/${row.id}/${firstItemId}`
         : `/laudos/${row.id}`;
       return (
-        <Button asChild variant="ghost" size="sm" className="gap-1.5">
-          <Link href={href}>
-            Abrir
-            <ExternalLink className="h-3.5 w-3.5" />
-          </Link>
-        </Button>
+        <div className="flex items-center justify-end gap-1">
+          <Button asChild variant="ghost" size="icon" className="h-8 w-8" title="Abrir Laudo">
+            <Link href={href}>
+              <Eye className="h-4 w-4" />
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            disabled={row.status !== "completed"}
+            title="Imprimir Laudo"
+            onClick={() => {
+              if (firstItemId) {
+                window.open(`/laudos/${row.id}/${firstItemId}/imprimir`, "_blank");
+              }
+            }}
+          >
+            <Printer className="h-4 w-4" />
+          </Button>
+        </div>
       );
     },
   },

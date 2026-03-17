@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import Link from "next/link";
+import { format, differenceInYears } from "date-fns";
 import { toast } from "sonner";
 import type { Editor } from "@tiptap/react";
 import { saveExamItem, finalizeExamItem } from "@/app/(protected)/laudos/actions";
@@ -9,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Save, CheckCircle, Printer, BookOpen,
-  Clock, AlertCircle, CheckCircle2,
+  Clock, AlertCircle, CheckCircle2, ArrowLeft,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { LaudoRichTextEditor } from "./LaudoRichTextEditor";
@@ -196,6 +198,16 @@ export function LaudoEditor({
   const statusConfig = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending;
   const StatusIcon = statusConfig.Icon;
 
+  const age = useMemo(() => {
+    if (!patient?.birth_date) return null;
+    return differenceInYears(new Date(), new Date(patient.birth_date + "T00:00:00"));
+  }, [patient?.birth_date]);
+
+  const genderLabel = useMemo(() => {
+    if (!patient?.gender) return null;
+    return patient.gender === "M" ? "Masculino" : "Feminino";
+  }, [patient?.gender]);
+
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
       {/* ── MAIN EDITOR AREA ── */}
@@ -212,9 +224,17 @@ export function LaudoEditor({
                 {statusConfig.label}
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground truncate">
-              {patient?.name} · {unit?.name}
-            </p>
+            <div className="flex items-center gap-x-3 gap-y-1 text-xs text-muted-foreground flex-wrap">
+              <span className="text-foreground font-medium">{patient?.name}</span>
+              {patient?.cpf && <span>CPF: {patient.cpf}</span>}
+              {patient?.birth_date && (
+                <span>
+                  Nasc: {format(new Date(patient.birth_date + "T00:00:00"), "dd/MM/yyyy")}
+                  {age !== null && ` (${age} anos)`}
+                </span>
+              )}
+              {genderLabel && <span>Sexo: {genderLabel}</span>}
+            </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {lastSaved && (
@@ -277,35 +297,50 @@ export function LaudoEditor({
           </div>
 
           {/* Footer: Rascunho e Finalizar */}
-          <div className="shrink-0 border-t bg-background px-4 py-2 flex items-center justify-end gap-2">
+          <div className="shrink-0 border-t bg-background px-4 py-2 flex items-center justify-between">
             <Button
+              asChild
               type="button"
-              variant="secondary"
-              size="sm"
-              className="gap-1.5 h-8"
-              onClick={handleSave}
-            >
-              <Save className="h-3.5 w-3.5" />
-                Rascunho
-            </Button>
-            <Button
-              type="submit"
+              variant="ghost"
               size="sm"
               className="gap-1.5 h-8"
             >
-              <CheckCircle className="h-3.5 w-3.5" />
-                Finalizar
+              <Link href="/laudos">
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Voltar
+              </Link>
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="gap-1.5 h-8"
-              disabled={status !== "completed"}
-              onClick={() => window.open(`/laudos/${requestId}/${itemId}/imprimir`, "_blank")}
-            >
-              <Printer className="h-3.5 w-3.5" /> Imprimir
-            </Button>
+
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="gap-1.5 h-8"
+                onClick={handleSave}
+              >
+                <Save className="h-3.5 w-3.5" />
+                  Rascunho
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                className="gap-1.5 h-8"
+              >
+                <CheckCircle className="h-3.5 w-3.5" />
+                  Finalizar
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="gap-1.5 h-8"
+                disabled={status !== "completed"}
+                onClick={() => window.open(`/laudos/${requestId}/${itemId}/imprimir`, "_blank")}
+              >
+                <Printer className="h-3.5 w-3.5" /> Imprimir
+              </Button>
+            </div>
           </div>
         </form>
       </div>
