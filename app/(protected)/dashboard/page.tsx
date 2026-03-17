@@ -19,12 +19,14 @@ export default async function DashboardPage() {
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // Fetch metrics concurrently
+  // Fetch metrics and onboarding status concurrently
   const [
-    { count: totalToday },
-    { count: pendingCount },
-    { count: completedCount },
-    { data: recentExams },
+    todayMetrics,
+    pendingMetrics,
+    completedMetrics,
+    recentExamsResult,
+    unitsResult,
+    profileResult
   ] = await Promise.all([
     supabase
       .from("exam_requests")
@@ -54,8 +56,25 @@ export default async function DashboardPage() {
       `)
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(5)
+      .limit(5),
+
+    // Mandatory onboarding checks: at least one unit and signature
+    supabase.from("units").select("id").eq("user_id", user.id).limit(1),
+    supabase.from("profiles").select("signature").eq("id", user.id).single()
   ]);
+
+  // Check if mandatory onboarding is missing
+  const hasUnit = unitsResult.data && unitsResult.data.length > 0;
+  const hasSignature = !!profileResult.data?.signature;
+
+  if (!hasUnit || !hasSignature) {
+    redirect("/onboarding");
+  }
+
+  const totalToday = todayMetrics.count ?? 0;
+  const pendingCount = pendingMetrics.count ?? 0;
+  const completedCount = completedMetrics.count ?? 0;
+  const recentExams = recentExamsResult.data || [];
 
   return (
     <PageContainer>
@@ -79,7 +98,7 @@ export default async function DashboardPage() {
             <Activity className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-foreground">{totalToday ?? 0}</div>
+            <div className="text-3xl font-bold tracking-tight text-foreground">{totalToday}</div>
             <p className="text-xs text-muted-foreground mt-1">
               {format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
             </p>
@@ -92,7 +111,7 @@ export default async function DashboardPage() {
             <Clock className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-amber-600">{pendingCount ?? 0}</div>
+            <div className="text-3xl font-bold tracking-tight text-amber-600">{pendingCount}</div>
             <p className="text-xs text-muted-foreground mt-1">Aguardando finalização</p>
           </CardContent>
         </Card>
@@ -103,7 +122,7 @@ export default async function DashboardPage() {
             <CheckCircle2 className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold tracking-tight text-emerald-600">{completedCount ?? 0}</div>
+            <div className="text-3xl font-bold tracking-tight text-emerald-600">{completedCount}</div>
             <p className="text-xs text-muted-foreground mt-1">Assinados e fechados</p>
           </CardContent>
         </Card>
@@ -128,14 +147,13 @@ export default async function DashboardPage() {
           <CardContent className="p-0 flex-1 flex flex-col">
             {recentExams && recentExams.length > 0 ? (
               <div className="divide-y">
-                {recentExams.map((exam) => (
+                {recentExams.map((exam: any) => (
                   <div key={exam.id} className="p-4 flex items-center justify-between hover:bg-muted/20 transition-colors">
                     <div className="flex items-center gap-4">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
                         <FileText className="h-5 w-5" />
                       </div>
                       <div>
-                        {/* @ts-expect-error supabase typing */}
                         <p className="font-medium text-sm leading-none mb-1">{exam.patients?.name || "Paciente Removido"}</p>
                         <p className="text-xs text-muted-foreground">
                           {format(new Date(exam.created_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}

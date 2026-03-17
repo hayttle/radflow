@@ -27,6 +27,7 @@ import {
   Activity,
   LayoutDashboard,
   MessageSquarePlus,
+  CreditCard,
 } from "lucide-react";
 import { useState } from "react";
 import { FeedbackModal } from "./feedback-modal";
@@ -66,7 +67,7 @@ const configNav = [
     icon: MessageSquareQuote,
   },
   {
-    label: "Assinatura",
+    label: "Assinatura Digital",
     href: "/configuracoes/assinatura",
     icon: Signature,
   },
