@@ -13,17 +13,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { UserProfile } from "@/components/user-profile";
+import { AdminProfileDropdown } from "@/components/admin-profile-dropdown";
 import {
   Users,
   MessageSquare,
   LayoutDashboard,
   ShieldCheck,
   CreditCard,
-  ArrowLeft,
   Package,
 } from "lucide-react";
 
@@ -103,33 +101,12 @@ export function AdminSidebar({ userEmail, userName, avatarUrl }: AdminSidebarPro
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        <SidebarSeparator className="mx-4 my-2 opacity-50" />
-
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu className="px-2">
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className="py-6 transition-all duration-300 hover:bg-primary/5 text-muted-foreground hover:text-primary group"
-                >
-                  <Link href="/dashboard" className="flex items-center">
-                    <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                    <span className="text-base font-medium ml-3">Voltar ao App</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t">
         <div className="flex items-center gap-2 px-2 py-2">
           <div className="min-w-0 flex-1">
-            <UserProfile
-              variant="sidebar"
+            <AdminProfileDropdown
               userEmail={userEmail}
               userName={userName}
               avatarUrl={avatarUrl}

@@ -71,12 +71,12 @@ export function LoginForm({
         return;
       }
 
-      // Redireciona: redirect seguro > papel do usuário
+      // Redireciona: super_admin sempre para /admin, outros para redirect seguro ou dashboard
       const target =
-        redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
-          ? redirectTo
-          : profile.role === "super_admin"
-            ? "/admin"
+        profile.role === "super_admin"
+          ? "/admin"
+          : redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+            ? redirectTo
             : "/dashboard";
       router.push(target);
     } catch (err: unknown) {

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { UserProfile } from "@/components/user-profile";
+import { AdminProfileDropdown } from "@/components/admin-profile-dropdown";
 import {
   FileText,
   Users,
@@ -77,9 +78,10 @@ interface AppSidebarProps {
   userEmail?: string;
   userName?: string;
   avatarUrl?: string;
+  role?: string;
 }
 
-export function AppSidebar({ userEmail, userName, avatarUrl }: AppSidebarProps) {
+export function AppSidebar({ userEmail, userName, avatarUrl, role }: AppSidebarProps) {
   const pathname = usePathname();
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
@@ -169,12 +171,20 @@ export function AppSidebar({ userEmail, userName, avatarUrl }: AppSidebarProps) 
       <SidebarFooter className="border-t">
         <div className="flex items-center gap-2 px-2 py-1.5">
           <div className="min-w-0 flex-1">
-            <UserProfile
-              variant="sidebar"
-              userEmail={userEmail}
-              userName={userName}
-              avatarUrl={avatarUrl}
-            />
+            {role === "super_admin" ? (
+              <AdminProfileDropdown
+                userEmail={userEmail}
+                userName={userName}
+                avatarUrl={avatarUrl}
+              />
+            ) : (
+              <UserProfile
+                variant="sidebar"
+                userEmail={userEmail}
+                userName={userName}
+                avatarUrl={avatarUrl}
+              />
+            )}
           </div>
           <ThemeSwitcher />
         </div>

@@ -1,6 +1,6 @@
 import { AdminSidebar } from "@/components/admin-sidebar";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import { UserProfile } from "@/components/user-profile";
+import { AdminProfileDropdown } from "@/components/admin-profile-dropdown";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -47,7 +47,7 @@ async function AdminAuthWrapper({ children }: { children: React.ReactNode }) {
             </h1>
           </div>
           <div className="flex items-center gap-3">
-            <UserProfile
+            <AdminProfileDropdown
               userEmail={user.email}
               userName={userName}
               avatarUrl={user.user_metadata?.avatar_url}

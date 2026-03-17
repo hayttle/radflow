@@ -25,7 +25,7 @@ async function AuthWrapper({ children }: { children: React.ReactNode }) {
       .eq("user_id", user.id)
       .eq("active", true)
       .order("name", { ascending: true }),
-    supabase.from("profiles").select("full_name").eq("id", user.id).single(),
+    supabase.from("profiles").select("full_name, role").eq("id", user.id).single(),
   ]);
 
   const userName = profile?.full_name ?? (user.user_metadata?.full_name as string | undefined);
@@ -37,6 +37,7 @@ async function AuthWrapper({ children }: { children: React.ReactNode }) {
           userEmail={user.email}
           userName={userName}
           avatarUrl={user.user_metadata?.avatar_url}
+          role={profile?.role}
         />
         <SidebarInset className="flex flex-col h-screen min-w-0 overflow-hidden">
           {/* Fixed Header */}

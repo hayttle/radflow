@@ -69,6 +69,17 @@ export async function updateSession(request: NextRequest) {
 
     // Only enforce for main app pages, avoiding infinite loops on billing
     if (!isApiOrAuth && !isBillingPage && !isRoot) {
+      // Check for super_admin role first to allow unrestricted access
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.sub)
+        .maybeSingle();
+
+      if (profile?.role === "super_admin") {
+        return supabaseResponse;
+      }
+
       const { data: subscription } = await supabase
         .from("subscriptions")
         .select("status")
