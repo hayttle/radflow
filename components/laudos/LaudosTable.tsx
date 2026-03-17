@@ -20,11 +20,11 @@ export type LaudoRequestRow = {
 
 const statusConfig: Record<
   string,
-  { label: string; variant: "default" | "secondary" | "outline"; Icon: React.ElementType }
+  { label: string; variant: "default" | "secondary" | "outline" | "success"; Icon: React.ElementType }
 > = {
   pending: { label: "Pendente", variant: "secondary", Icon: Clock },
   in_progress: { label: "Em andamento", variant: "default", Icon: AlertCircle },
-  completed: { label: "Concluído", variant: "outline", Icon: CheckCircle2 },
+  completed: { label: "Concluído", variant: "success", Icon: CheckCircle2 },
 };
 
 const COLUMNS: DataTableColumn<LaudoRequestRow>[] = [

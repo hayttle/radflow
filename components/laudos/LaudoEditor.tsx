@@ -19,11 +19,11 @@ type SectionKey = "technique" | "description" | "impression";
 
 const STATUS_CONFIG: Record<
   string,
-  { label: string; variant: "default" | "secondary" | "outline"; Icon: React.ElementType }
+  { label: string; variant: "default" | "secondary" | "outline" | "success"; Icon: React.ElementType }
 > = {
   pending: { label: "Pendente", variant: "secondary", Icon: Clock },
   in_progress: { label: "Em andamento", variant: "default", Icon: AlertCircle },
-  completed: { label: "Concluído", variant: "outline", Icon: CheckCircle2 },
+  completed: { label: "Concluído", variant: "success", Icon: CheckCircle2 },
 };
 
 interface LaudoEditorProps {
@@ -222,14 +222,6 @@ export function LaudoEditor({
                 Salvo {lastSaved.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
               </span>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5"
-              onClick={() => window.open(`/laudos/${requestId}/${itemId}/imprimir`, "_blank")}
-            >
-              <Printer className="h-4 w-4" /> Imprimir
-            </Button>
           </div>
         </div>
 
@@ -303,6 +295,16 @@ export function LaudoEditor({
             >
               <CheckCircle className="h-3.5 w-3.5" />
                 Finalizar
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="gap-1.5 h-8"
+              disabled={status !== "completed"}
+              onClick={() => window.open(`/laudos/${requestId}/${itemId}/imprimir`, "_blank")}
+            >
+              <Printer className="h-3.5 w-3.5" /> Imprimir
             </Button>
           </div>
         </form>

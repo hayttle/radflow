@@ -75,12 +75,12 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
       setTechnique(template?.technique ?? "");
       setDescription(template?.description ?? "");
       setImpression(template?.impression ?? "");
-      
+
       const parsedVars = (template?.variables as TemplateVariable[] | undefined)?.map((v) => ({
         ...v,
         options: Array.isArray(v.options) ? v.options.join("; ") : v.options,
       })) ?? [];
-      
+
       setVariables(parsedVars);
     }
   }, [open, template]);
@@ -118,9 +118,9 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
       <div className="flex flex-wrap gap-1.5 mb-2 bg-muted/30 p-2 rounded-md border border-dashed border-muted-foreground/20">
         <span className="text-[10px] uppercase font-bold text-muted-foreground w-full mb-1">Inserir Variável:</span>
         {validVars.map((v) => (
-          <Badge 
-            key={v.name} 
-            variant="secondary" 
+          <Badge
+            key={v.name}
+            variant="secondary"
             className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors text-[11px] py-0 h-5"
             onClick={() => onInsert(v.name)}
           >
@@ -223,7 +223,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
 
           {/* Variáveis Dinâmicas */}
           <section className="space-y-4">
-             <div className="flex items-center justify-between border-b pb-2">
+            <div className="flex items-center justify-between border-b pb-2">
               <h3 className="text-lg font-medium">Variáveis Dinâmicas</h3>
               <Button type="button" variant="outline" size="sm" onClick={addVariable}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -246,28 +246,28 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1">
                       <div className="space-y-1">
                         <Label className="text-xs">Variável / Pergunta</Label>
-                        <Input 
-                          placeholder="Ex: Aspecto do pulmão" 
-                          value={v.label} 
-                          onChange={(e) => updateVariable(index, "label", e.target.value)} 
+                        <Input
+                          placeholder="Ex: Aspecto do pulmão"
+                          value={v.label}
+                          onChange={(e) => updateVariable(index, "label", e.target.value)}
                           className="h-8 text-sm"
                         />
                       </div>
                       <div className="space-y-1">
                         <Label className="text-xs">Opções (separadas por ponto-e-virgula ;) </Label>
-                        <Input 
-                          placeholder="Normal; Múltiplos nódulos; Condensação" 
-                          value={v.options} 
-                          onChange={(e) => updateVariable(index, "options", e.target.value)} 
+                        <Input
+                          placeholder="Normal; Múltiplos nódulos; Condensação"
+                          value={v.options}
+                          onChange={(e) => updateVariable(index, "options", e.target.value)}
                           className="h-8 text-sm"
                         />
                       </div>
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="ghost" 
-                      size="icon" 
-                      className="text-muted-foreground hover:text-destructive shrink-0 mt-5" 
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-destructive shrink-0 mt-5"
                       onClick={() => removeVariable(index)}
                     >
                       <Trash className="h-4 w-4" />
@@ -281,7 +281,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
           {/* Textos Padrão */}
           <section className="space-y-6">
             <h3 className="text-lg font-medium border-b pb-2">Modelo de Laudo</h3>
-            
+
             <div className="space-y-2">
               <Label>Técnica</Label>
               <VariableChips onInsert={(name) => insertVariable(teqEditor, name)} />
@@ -289,7 +289,7 @@ export function ModelSheet({ open, onOpenChange, template, units }: ModelSheetPr
             </div>
 
             <div className="space-y-2">
-              <Label>Resultados</Label>
+              <Label>Resultado</Label>
               <VariableChips onInsert={(name) => insertVariable(descEditor, name)} />
               <RichTextEditor value={description} onChange={setDescription} onReady={setDescEditor} />
             </div>

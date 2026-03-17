@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -317,6 +318,22 @@ export default function DesignSystemPage() {
             <Badge variant="secondary">Secondary</Badge>
             <Badge variant="outline">Outline</Badge>
             <Badge variant="destructive">Destructive</Badge>
+            <Badge variant="success">Success</Badge>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest">Status Badges (Laudos)</p>
+            <div className="flex flex-wrap gap-4">
+              <Badge variant="secondary" className="gap-1.5 px-3 py-1 text-sm font-medium">
+                <Clock className="h-3.5 w-3.5" /> Pendente
+              </Badge>
+              <Badge variant="default" className="gap-1.5 px-3 py-1 text-sm font-medium">
+                <AlertCircle className="h-3.5 w-3.5" /> Em andamento
+              </Badge>
+              <Badge variant="success" className="gap-1.5 px-3 py-1 text-sm font-medium">
+                <CheckCircle2 className="h-3.5 w-3.5" /> Concluído
+              </Badge>
+            </div>
           </div>
           
           <div className="space-y-8 max-w-md">
