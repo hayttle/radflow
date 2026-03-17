@@ -169,7 +169,8 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+    <>
+      <form onSubmit={handleSubmit} className="mt-8 space-y-6">
       {/* Patient */}
       <div className="space-y-2">
         <Label htmlFor="patient" required>Paciente</Label>
@@ -178,7 +179,7 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
             <Button
               variant="outline"
               role="combobox"
-              className="w-full justify-between font-normal"
+              className="w-full justify-between font-normal focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
               id="patient"
               type="button"
             >
@@ -315,6 +316,7 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
         )}
       </div>
 
+      </form>
       <PatientSheet
         open={patientSheetOpen}
         onOpenChange={handlePatientSheetClose}
@@ -376,6 +378,6 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
           <>Abrir Editor de Laudo <ChevronRight className="h-4 w-4" /></>
         )}
       </Button>
-    </form>
+    </>
   );
 }
