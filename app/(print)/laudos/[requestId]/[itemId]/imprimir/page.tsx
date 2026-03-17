@@ -138,7 +138,7 @@ export default async function PrintLaudoPage({params}: {params: Promise<{request
 
   return (
     <>
-      <style type="text/css" media="print">
+      <style type="text/css">
         {`
           @page {
             size: A4 portrait;
@@ -155,6 +155,10 @@ export default async function PrintLaudoPage({params}: {params: Promise<{request
           }
           thead { display: table-header-group; }
           tfoot { display: table-footer-group; }
+          .report-body, .report-body * { font-size: 14px !important; line-height: 1.5; }
+          .report-body p { margin-bottom: 0.5rem; }
+          .report-body h2 { font-weight: bold; text-transform: uppercase; margin-top: 1rem; margin-bottom: 0.25rem; }
+          .report-body section { margin-bottom: 1.5rem; }
         `}
       </style>
       <div className="mx-auto min-h-screen print:min-h-0 w-full bg-gray-100 print:bg-white text-black p-4 md:p-8 print:p-0">
@@ -167,7 +171,7 @@ export default async function PrintLaudoPage({params}: {params: Promise<{request
           header={
             unit.report_header ? (
               <div
-                className="mb-4 pt-4 px-8 pb-0 prose prose-sm max-w-none prose-p:my-0 prose-headings:my-0 flow-root clear-both"
+                className="mb-4 pt-4 pb-0 report-body max-w-none prose-p:my-0 prose-headings:my-0 flow-root clear-both"
                 dangerouslySetInnerHTML={{__html: renderContent(unit.report_header)}}
               />
             ) : (
@@ -177,7 +181,7 @@ export default async function PrintLaudoPage({params}: {params: Promise<{request
             )
           }
           patientInfo={
-            <div className="mt-4 mx-8 grid grid-cols-2 gap-x-8 text-sm clear-both">
+            <div className="mt-4 grid grid-cols-2 gap-x-8 text-[14px] clear-both">
               <div className="space-y-1">
                 <p>
                   <span className="text-[#3b82f6] font-medium">Paciente:</span>{" "}
@@ -206,7 +210,7 @@ export default async function PrintLaudoPage({params}: {params: Promise<{request
               <div className="text-center mb-3">
                 <h2 className="text-l font-bold uppercase tracking-tight">{template?.title || "EXAME"}</h2>
               </div>
-              <div className="space-y-6 mx-8 prose prose-sm max-w-none text-black print:text-black prose-p:my-1 prose-headings:my-2">
+              <div className="space-y-6 report-body max-w-none text-black">
                 {(snapshot?.technique || template?.technique) && (
                   <section>
                     <h2 className="text-sm font-bold uppercase mb-2 pb-1 border-b border-black/10 print:border-black/10">Técnica</h2>
@@ -235,7 +239,7 @@ export default async function PrintLaudoPage({params}: {params: Promise<{request
             </>
           }
           signature={
-            <div className="px-8 pb-4">
+            <div className="pb-4">
               {profile?.signature ? (
                 <div
                   className="prose prose-sm max-w-none w-full text-black print:text-black prose-p:my-0 flow-root clear-both"
@@ -252,7 +256,7 @@ export default async function PrintLaudoPage({params}: {params: Promise<{request
           footer={
             unit.report_footer ? (
               <div
-                className="px-8 pt-6 pb-8 print:pb-4 prose prose-sm max-w-none text-center text-muted-foreground print:text-black flow-root clear-both"
+                className="pt-6 pb-8 print:pb-4 report-body max-w-none text-center text-muted-foreground print:text-black flow-root clear-both"
                 dangerouslySetInnerHTML={{__html: renderContent(unit.report_footer)}}
               />
             ) : (

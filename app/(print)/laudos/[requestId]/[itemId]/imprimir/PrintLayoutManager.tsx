@@ -21,7 +21,7 @@ export function PrintLayoutManager({
   footer: ReactNode;
 }) {
   return (
-    <div className="w-full max-w-[210mm] mx-auto bg-white text-black">
+    <div className="w-full max-w-[210mm] mx-auto bg-white text-black p-[10mm] shadow-lg print:p-0 print:shadow-none">
       <table className="w-full" style={{ tableLayout: "fixed" }}>
         <thead>
           <tr>

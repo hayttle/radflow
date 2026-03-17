@@ -138,7 +138,7 @@ export function LaudoRichTextEditor({
     editorProps: {
       attributes: {
         class: [
-          "prose prose-sm max-w-none focus:outline-none px-3 py-2",
+          "prose-custom max-w-none focus:outline-none px-3 py-2 text-[14px]",
           "border border-input rounded-md bg-background shadow-sm",
           "min-w-0 w-full",
           minHeight,
@@ -315,6 +315,19 @@ export function LaudoRichTextEditor({
           display: block !important;
           margin-left: 0 !important;
           margin-right: auto !important;
+        }
+        .prose-custom, .prose-custom * {
+          font-size: 14px !important;
+          line-height: 1.5;
+        }
+        .prose-custom p {
+          margin-bottom: 0.5rem;
+        }
+        .prose-custom h2 {
+          font-weight: bold;
+          text-transform: uppercase;
+          margin-top: 1rem;
+          margin-bottom: 0.25rem;
         }
       `}</style>
     </VariableContext.Provider>
