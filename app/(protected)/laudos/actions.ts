@@ -59,10 +59,23 @@ export async function createPatientQuick(name: string) {
  * Creates an exam_request + the first exam_item, then redirects to the editor.
  */
 export async function createExamRequest(formData: FormData) {
-  const raw = Object.fromEntries(formData);
-  const parsed = CreateExamRequestSchema.safeParse(raw);
+  const patient_id = formData.get("patient_id") as string;
+  const unit_id = formData.get("unit_id") as string;
+  const template_ids = formData.getAll("template_ids") as string[];
+  const date = formData.get("date") as string | null;
+  const notes = formData.get("notes") as string | null;
+
+  const parsed = CreateExamRequestSchema.safeParse({
+    patient_id,
+    unit_id,
+    template_ids,
+    date: date || undefined,
+    notes: notes || undefined,
+  });
+
   if (!parsed.success) {
-    return { error: parsed.error.flatten().fieldErrors };
+    console.error("Validation error in createExamRequest:", parsed.error.flatten().fieldErrors);
+    return { error: "Dados inválidos. Verifique os campos obrigatórios." };
   }
 
   const { supabase, user } = await getAuthUser();
@@ -83,20 +96,25 @@ export async function createExamRequest(formData: FormData) {
 
   if (reqErr || !request) return { error: reqErr?.message ?? "Erro ao criar atendimento" };
 
-  // 2. Create the exam_item (laudo) linked to template
-  const { data: item, error: itemErr } = await supabase
-    .from("exam_items")
-    .insert({
-      user_id: user.id,
-      request_id: request.id,
-      template_id: parsed.data.template_id,
-      status: "in_progress",
-      form_snapshot: { variable_selections: {} } satisfies ExamFormSnapshot,
-    })
-    .select("id")
-    .single();
+  // 2. Create multiple exam_items (laudos) linked to templates
+  const itemsToInsert = parsed.data.template_ids.map((tid, index) => ({
+    user_id: user.id,
+    request_id: request.id,
+    template_id: tid,
+    status: "in_progress" as const,
+    sort_order: index,
+    form_snapshot: { variable_selections: {} } satisfies ExamFormSnapshot,
+  }));
 
-  if (itemErr || !item) return { error: itemErr?.message ?? "Erro ao criar laudo" };
+  const { data: items, error: itemErr } = await supabase
+    .from("exam_items")
+    .insert(itemsToInsert)
+    .select("id")
+    .order("sort_order", { ascending: true });
+
+  if (itemErr || !items || items.length === 0) {
+    return { error: itemErr?.message ?? "Erro ao criar laudos" };
+  }
 
   // Update request status to in_progress
   await supabase
@@ -105,7 +123,8 @@ export async function createExamRequest(formData: FormData) {
     .eq("id", request.id);
 
   revalidatePath("/laudos");
-  redirect(`/laudos/${request.id}/${item.id}`);
+  // Redirect to the first item created
+  redirect(`/laudos/${request.id}/${items[0].id}`);
 }
 
 // ────── EXAM ITEMS ──────

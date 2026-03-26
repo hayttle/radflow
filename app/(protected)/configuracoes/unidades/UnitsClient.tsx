@@ -8,10 +8,15 @@ import { deleteUnit } from "./actions";
 import { toast } from "sonner";
 import type { Unit } from "@/types/supabase";
 import { UnitSheet } from "@/components/configuracoes/UnitSheet";
+import { DataTable } from "@/components/data-table";
+import type { DataTableColumn } from "@/components/data-table";
+import { DeleteConfirmDialog } from "@/components/ui/delete-confirm-dialog";
 
 export function UnitsClient({ units }: { units: Unit[] }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingUnit, setEditingUnit] = useState<Unit | null>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [unitToDelete, setUnitToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleNew = () => {
@@ -24,15 +29,89 @@ export function UnitsClient({ units }: { units: Unit[] }) {
     setSheetOpen(true);
   };
 
-  const handleDelete = (id: string, name: string) => {
-    if (!confirm(`Tem certeza que deseja excluir a unidade ${name}?`)) return;
+  const handleDeleteClick = (id: string, name: string) => {
+    setUnitToDelete({ id, name });
+    setDeleteOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!unitToDelete) return;
     
     startTransition(async () => {
-      const res = await deleteUnit(id);
+      const res = await deleteUnit(unitToDelete.id);
       if (res.error) toast.error("Falha ao excluir", { description: res.error });
       else toast.success("Unidade excluída com sucesso");
+      setUnitToDelete(null);
     });
   };
+
+  const COLUMNS: DataTableColumn<Unit>[] = [
+    {
+      key: "name",
+      label: "Nome",
+      render: (row) => (
+        <div className="flex items-center gap-2 font-medium">
+          <Building2 className="h-4 w-4 text-muted-foreground" />
+          {row.name}
+        </div>
+      ),
+    },
+    {
+      key: "active",
+      label: "Status",
+      render: (row) => (
+        <div className="flex items-center gap-1.5">
+          {row.active ? (
+            <><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Ativa</>
+          ) : (
+            <><XCircle className="h-3.5 w-3.5 text-muted-foreground" /> Inativa</>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "address",
+      label: "Endereço",
+      render: (row) => (
+        <span className="text-muted-foreground">{row.address || "Sem endereço"}</span>
+      ),
+    },
+    {
+      key: "phone",
+      label: "Telefone",
+      render: (row) => (
+        <span className="text-muted-foreground">{row.phone || "Sem telefone"}</span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "Ações",
+      className: "text-right",
+      render: (row) => (
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5"
+            onClick={() => handleEdit(row)}
+          >
+            <Pencil className="h-3.5 w-3.5" />
+            Editar
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-1.5 hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+            onClick={() => handleDeleteClick(row.id, row.name)}
+            disabled={isPending}
+          >
+            <Trash className="h-3.5 w-3.5" />
+            Excluir
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -47,53 +126,34 @@ export function UnitsClient({ units }: { units: Unit[] }) {
         }
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {units.length === 0 ? (
-          <div className="col-span-full border border-dashed rounded-xl p-12 text-center text-muted-foreground bg-muted/20">
-            Nenhuma unidade configurada. Clique em &quot;Nova Unidade&quot; para começar.
-          </div>
-        ) : (
-          units.map((u) => (
-            <div key={u.id} className="relative group bg-card border rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-2.5 bg-primary/10 text-primary rounded-xl">
-                    <Building2 className="h-6 w-6" />
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-background border px-2.5 py-1 rounded-full text-xs font-medium">
-                    {u.active ? (
-                      <><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Ativa</>
-                    ) : (
-                      <><XCircle className="h-3.5 w-3.5 text-muted-foreground" /> Inativa</>
-                    )}
-                  </div>
-                </div>
-                
-                <h3 className="text-lg font-semibold text-foreground line-clamp-1 mb-1">{u.name}</h3>
-                
-                <div className="text-sm text-muted-foreground space-y-1 mb-6">
-                  <p className="line-clamp-1">{u.address || "Sem endereço cadastrado"}</p>
-                  <p>{u.phone || "Sem telefone"}</p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-2 mt-auto">
-                  <Button variant="secondary" className="w-full text-sm font-medium" onClick={() => handleEdit(u)}>
-                    <Pencil className="h-3.5 w-3.5 mr-2" /> Editar
-                  </Button>
-                  <Button variant="ghost" className="w-full text-sm font-medium hover:bg-destructive/10 hover:text-destructive text-muted-foreground" onClick={() => handleDelete(u.id, u.name)} disabled={isPending}>
-                    <Trash className="h-3.5 w-3.5 mr-2" /> Excluir
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
+      <div className="mt-4">
+        <DataTable
+          columns={COLUMNS}
+          data={units}
+          getRowId={(row) => row.id}
+          emptyMessage="Nenhuma unidade configurada. Clique em 'Nova Unidade' para começar."
+          emptyAction={
+            <Button onClick={handleNew} variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Unidade
+            </Button>
+          }
+        />
       </div>
 
       <UnitSheet 
         open={sheetOpen} 
         onOpenChange={setSheetOpen} 
         unit={editingUnit} 
+      />
+
+      <DeleteConfirmDialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        title="Excluir unidade"
+        itemName={unitToDelete?.name}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isPending}
       />
     </>
   );

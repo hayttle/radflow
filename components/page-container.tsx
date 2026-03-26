@@ -22,16 +22,16 @@ export function PageContainer({
 }: PageContainerProps) {
   const baseClasses = fullWidth
     ? "w-full max-w-none p-0"
-    : "container mx-auto max-w-7xl py-10 px-4 md:px-6 pb-24";
+    : "w-full h-full p-4 md:p-6 lg:p-8 pb-24";
   return (
     <div className={`${baseClasses} ${className || ""}`} {...props}>
       {(title || description || actions) && (
         <div className="space-y-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1">
-              {title && <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">{title}</h1>}
+              {title && <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">{title}</h1>}
               {description && (
-                <p className="text-muted-foreground text-lg max-w-3xl leading-relaxed">
+                <p className="text-muted-foreground text-md max-w-3xl leading-relaxed">
                   {description}
                 </p>
               )}

@@ -69,7 +69,7 @@ export type ExamPhraseInput = z.infer<typeof ExamPhraseSchema>;
 export const CreateExamRequestSchema = z.object({
   patient_id: z.string().uuid("Selecione um paciente"),
   unit_id: z.string().uuid("Selecione uma unidade"),
-  template_id: z.string().uuid("Selecione um modelo de exame"),
+  template_ids: z.array(z.string().uuid()).min(1, "Selecione pelo menos um modelo de exame"),
   date: z.string().optional(),
   notes: z.string().optional().nullable(),
 });

@@ -13,7 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, UserPlus, Loader2, ChevronRight, User, Pencil } from "lucide-react";
+import { Search, UserPlus, Loader2, ChevronRight, User, Pencil, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Command,
   CommandEmpty,
@@ -87,17 +88,17 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
     }
   }, [unitContextLoading, activeUnitId, unitId, units]);
 
-  const [templateId, setTemplateId] = useState("");
+  const [selectedTemplates, setSelectedTemplates] = useState<TemplateItem[]>([]);
 
-  // Limpa template quando troca a unidade (pode não existir na nova unidade)
+  // Filtra templates selecionados que não pertencem mais à unidade (se trocar de unidade)
   useEffect(() => {
-    if (unitId && templateId) {
-      const template = templates.find((t) => t.id === templateId);
-      const belongsToUnit =
-        !template?.unit_id || template.unit_id === unitId;
-      if (!belongsToUnit) setTemplateId("");
+    if (unitId && selectedTemplates.length > 0) {
+      setSelectedTemplates(prev => {
+        const valid = prev.filter(t => !t.unit_id || t.unit_id === unitId);
+        return valid.length !== prev.length ? valid : prev;
+      });
     }
-  }, [unitId, templateId, templates]);
+  }, [unitId, selectedTemplates.length]);
 
   // Modelos filtrados pela unidade: comuns (unit_id null) + da unidade selecionada
   const filteredTemplates = unitId
@@ -152,17 +153,22 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
     e.preventDefault();
     if (!selectedPatient) { toast.error("Selecione um paciente"); return; }
     if (!unitId) { toast.error("Selecione uma unidade"); return; }
-    if (!templateId) { toast.error("Selecione um modelo de exame"); return; }
+    if (selectedTemplates.length === 0) { toast.error("Selecione ao menos um modelo de exame"); return; }
 
     const formData = new FormData();
     formData.set("patient_id", selectedPatient.id);
     formData.set("unit_id", unitId);
-    formData.set("template_id", templateId);
+    selectedTemplates.forEach(t => {
+      formData.append("template_ids", t.id);
+    });
 
     startTransition(async () => {
       const result = await createExamRequest(formData);
       if (result?.error) {
-        toast.error("Erro ao criar atendimento. Verifique os dados.");
+        const errorMsg = typeof result.error === "string" 
+          ? result.error 
+          : "Erro ao criar atendimento. Verifique os dados.";
+        toast.error(errorMsg);
       }
       // On success, createExamRequest redirects server-side
     });
@@ -316,7 +322,7 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
         )}
       </div>
 
-      </form>
+
       <PatientSheet
         open={patientSheetOpen}
         onOpenChange={handlePatientSheetClose}
@@ -342,33 +348,66 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
       </div>
 
       {/* Template - filtrado pela unidade selecionada */}
-      <div className="space-y-2">
-        <Label htmlFor="template" required>Modelo de Exame</Label>
-        <Select
-          value={templateId}
-          onValueChange={setTemplateId}
-          disabled={!unitId}
-        >
-          <SelectTrigger id="template">
-            <SelectValue
-              placeholder={
-                unitId
-                  ? "Selecione o modelo..."
-                  : "Selecione a unidade primeiro"
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="template" required>Modelo de Exame</Label>
+          <Select
+            onValueChange={(tid) => {
+              const template = templates.find((t) => t.id === tid);
+              if (template && !selectedTemplates.some(st => st.id === tid)) {
+                setSelectedTemplates([...selectedTemplates, template]);
               }
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {filteredTemplates.map((t) => (
-              <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+            }}
+            disabled={!unitId}
+          >
+            <SelectTrigger id="template">
+              <SelectValue
+                placeholder={
+                  unitId
+                    ? "Clique para adicionar exames..."
+                    : "Selecione a unidade primeiro"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {filteredTemplates.map((t) => (
+                <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Selected Templates List */}
+        {selectedTemplates.length > 0 && (
+          <div className="space-y-2">
+            <Label className="text-xs text-muted-foreground uppercase tracking-wider">Exames Selecionados ({selectedTemplates.length})</Label>
+            <div className="flex flex-wrap gap-2">
+              {selectedTemplates.map((t) => (
+                <Badge 
+                  key={t.id} 
+                  variant="secondary" 
+                  className="pl-3 pr-1 py-1 gap-1 border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors"
+                >
+                  <span className="max-w-[200px] truncate text-xs">{t.title}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-5 w-5 rounded-full hover:bg-destructive hover:text-destructive-content"
+                    onClick={() => setSelectedTemplates(selectedTemplates.filter(st => st.id !== t.id))}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <Button
         type="submit"
-        disabled={isPending || !selectedPatient || !unitId || !templateId}
+        disabled={isPending || !selectedPatient || !unitId || selectedTemplates.length === 0}
         className="w-full gap-2"
         size="lg"
       >
@@ -378,6 +417,7 @@ export function NovoLaudoForm({ units, templates }: NovoLaudoFormProps) {
           <>Abrir Editor de Laudo <ChevronRight className="h-4 w-4" /></>
         )}
       </Button>
+      </form>
     </>
   );
 }

@@ -46,6 +46,7 @@ interface LaudoEditorProps {
   unit: { id: string; name: string; report_header: string | null; report_footer: string | null } | null;
   profile: { full_name: string | null; crm: string | null; signature: string | null } | null;
   phrases: { id: string; category: string; label: string; content: string }[];
+  requestItems: { id: string; status: string; title: string }[];
 }
 
 export function LaudoEditor({
@@ -58,6 +59,7 @@ export function LaudoEditor({
   patient,
   unit,
   phrases,
+  requestItems,
 }: LaudoEditorProps) {
   const [selections, setSelections] = useState<Record<string, string>>(
     snapshot.variable_selections ?? {}
@@ -345,8 +347,52 @@ export function LaudoEditor({
         </form>
       </div>
 
-      {/* ── SIDEBAR: Variáveis + Frases ── */}
+      {/* ── SIDEBAR: Navegação + Variáveis + Frases ── */}
       <div className="w-64 shrink-0 border-l flex flex-col bg-muted/10 overflow-hidden">
+        {/* Navigation: All Exams in this Request */}
+        {requestItems.length > 1 && (
+          <div className="shrink-0 border-b flex flex-col overflow-hidden max-h-[30%]">
+            <div className="px-4 py-2 bg-muted/30 border-b flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Exames deste Atendimento</span>
+            </div>
+            <div className="overflow-y-auto p-2 space-y-1">
+              {requestItems.map((ri) => {
+                const isCurrent = ri.id === itemId;
+                const config = STATUS_CONFIG[ri.status] ?? STATUS_CONFIG.pending;
+                const RI_Icon = config.Icon;
+                
+                return (
+                  <Link
+                    key={ri.id}
+                    href={`/laudos/${requestId}/${ri.id}`}
+                    className={`
+                      flex flex-col w-full p-2 rounded-md border text-left transition-all
+                      ${isCurrent 
+                        ? "bg-background border-primary shadow-sm" 
+                        : "border-transparent hover:bg-accent hover:border-accent-foreground/10"
+                      }
+                    `}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className={`text-[11px] font-bold truncate ${isCurrent ? "text-primary" : "text-foreground"}`}>
+                        {ri.title}
+                      </span>
+                      <RI_Icon className={`h-3 w-3 shrink-0 ${isCurrent ? "text-primary" : "text-muted-foreground"}`} />
+                    </div>
+                    <Badge 
+                      variant={isCurrent ? config.variant : "outline"} 
+                      className="text-[9px] px-1.5 h-4 w-fit uppercase font-medium"
+                    >
+                      {config.label}
+                    </Badge>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <LaudoVariablesPanel variables={variables} onInsert={handleInsertVariable} />
         <div className="shrink-0 px-4 py-3 border-b flex items-center gap-2">
           <BookOpen className="h-4 w-4 text-muted-foreground" />

@@ -40,6 +40,18 @@ export default async function EditorPage({ params }: PageProps) {
 
   if (!item) notFound();
 
+  // Fetch all items for this request to allow navigation
+  const { data: allItems } = await supabase
+    .from("exam_items")
+    .select(`
+      id, 
+      status,
+      exam_templates ( title )
+    `)
+    .eq("request_id", requestId)
+    .eq("user_id", user.id)
+    .order("sort_order", { ascending: true });
+
   // Fetch phrases for the sidebar
   const { data: phrases } = await supabase
     .from("exam_phrases")
@@ -94,6 +106,11 @@ export default async function EditorPage({ params }: PageProps) {
       unit={request.units}
       profile={profile}
       phrases={phrases ?? []}
+      requestItems={allItems?.map(i => ({
+        id: i.id,
+        status: i.status,
+        title: (i.exam_templates as unknown as { title: string })?.title || "Laudo"
+      })) ?? []}
     />
     </PageContainer>
   );
