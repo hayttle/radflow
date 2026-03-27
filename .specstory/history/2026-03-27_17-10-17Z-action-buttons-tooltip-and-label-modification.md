@@ -4660,3 +4660,230 @@ EOF
 <summary>Tool use: **run_terminal_command_v2**</summary>
 
 </details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Commit `691eeef` criado com 62 arquivos alterados — 30 renames rastreados pelo git com histórico preservado. Falta apenas o push quando quiser enviar ao remoto.
+
+---
+
+_**User**_
+
+documente
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<think><details><summary>Thought Process</summary>
+The user wants to update the documentation to reflect the new component folder structure. Let me update the `doc/documentation.md` file with the reorganized component structure.</details></think>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\doc\documentation.md</summary>
+
+</details>
+</tool-use>
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\doc\documentation.md</summary>
+
+</details>
+
+</tool-use>
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Agora também atualizo a seção de Design System para remover as referências a caminhos antigos:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\doc\documentation.md</summary>
+
+</details>
+
+</tool-use>
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add doc/documentation.md && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+docs: update documentation with new component folder structure
+
+Atualiza doc/documentation.md com a nova organização de components/:
+- Adiciona seção detalhada de cada pasta (shared, layout, auth, admin, onboarding, etc.)
+- Atualiza mapa de páginas com caminhos reais dos componentes pós-refatoração
+- Separa componentes ui/ e shared/ no design system
+EOF
+)"</summary>
+
+```bash
+cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add doc/documentation.md && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+docs: update documentation with new component folder structure
+
+Atualiza doc/documentation.md com a nova organização de components/:
+- Adiciona seção detalhada de cada pasta (shared, layout, auth, admin, onboarding, etc.)
+- Atualiza mapa de páginas com caminhos reais dos componentes pós-refatoração
+- Separa componentes ui/ e shared/ no design system
+EOF
+)"
+```
+
+```
+[master 744d06f] docs: update documentation with new component folder structure
+ 1 file changed, 258 insertions(+), 181 deletions(-)
+warning: in the working copy of 'doc/documentation.md', LF will be replaced by CRLF the next time Git touches it
+
+```
+</details>
+</tool-use>
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"><details>
+<summary>Tool use: **run_terminal_command_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Documentação atualizada e commitada (`744d06f`). As principais adições foram:
+
+- **Seção `📁 Estrutura de Componentes`** — árvore visual de todas as pastas com tabelas detalhadas para cada uma: `shared/`, `layout/`, `auth/`, `admin/`, `onboarding/`, `configuracoes/`, `laudos/`, `pacientes/`, `landing-page/`
+- **Mapa de páginas** — atualizado com os caminhos reais após a refatoração (ex: `shared/page-header` em vez de apenas `page-header.tsx`)
+- **Design System** — separação entre `ui/` (primitivos) e `shared/` (componentes reutilizáveis de negócio)
+
+---
+
+_**User**_
+
+git commit e push
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git status --short</summary>
+
+```bash
+cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git status --short
+```
+
+```
+ M .specstory/history/2026-03-27_17-10-17Z-action-buttons-tooltip-and-label-modification.md
+ M .specstory/statistics.json
+
+```
+</details>
+</tool-use>
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"><details>
+<summary>Tool use: **run_terminal_command_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add . && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+chore: update specstory history and statistics
+EOF
+)" && git push</summary>
+
+```bash
+cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add . && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+chore: update specstory history and statistics
+EOF
+)" && git push
+```
+
+```
+[master d9e43d4] chore: update specstory history and statistics
+ 2 files changed, 2505 insertions(+), 5 deletions(-)
+warning: in the working copy of '.specstory/history/2026-03-27_17-10-17Z-action-buttons-tooltip-and-label-modification.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.specstory/statistics.json', LF will be replaced by CRLF the next time Git touches it
+To https://github.com/hayttle/radflow.git
+   85cc943..d9e43d4  master -&gt; master
+
+```
+</details>
+</tool-use>
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"><details>
+<summary>Tool use: **run_terminal_command_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Feito. Branch `master` atualizado no remoto com todos os commits da sessão:
+
+- `f2d698b` — ActionButton reutilizável + migração das tabelas
+- `85cc943` — sync de arquivos gerais
+- `691eeef` — reorganização de `components/` por módulo
+- `744d06f` — documentação atualizada
+- `d9e43d4` — specstory (push atual)
+
+---
+
+_**User**_
+
+@c:\Users\haytt\.cursor\projects\c-Users-haytt-OneDrive-Documentos-Projetos-Saas-radflow\terminals\1.txt:1006-1033 
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<think><details><summary>Thought Process</summary>
+The error is from Tailwind CSS's content tracking - it's looking for `components/login-form.tsx` which no longer exists (it was moved to `components/auth/login-form.tsx`). Tailwind has a cache of file paths it was tracking. This is a Turbopack/Tailwind cache issue.
+
+The fix is to clear the Next.js cache (`.next` folder) so Tailwind rebuilds its content tracking from scratch.</details></think>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+O Tailwind está com cache do caminho antigo `components/login-form.tsx`. Basta limpar o cache do Next.js:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && rm -rf .next && echo "cache limpo"</summary>
+
+```bash
+cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && rm -rf .next && echo "cache limpo"
+```
+
+```
+cache limpo
+
+```
+</details>
+</tool-use>
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"><details>
+<summary>Tool use: **run_terminal_command_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Cache limpo. Reinicie o servidor de desenvolvimento (`npm run dev`) e o Tailwind vai reindexar os novos caminhos dos componentes corretamente.

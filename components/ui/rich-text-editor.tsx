@@ -121,7 +121,13 @@ export function RichTextEditor({
             const allStyles = containerStyle + " " + styleAttr;
             if (allStyles.includes('0px 0px 0px auto') || allStyles.includes('0 0 0 auto') || allStyles.includes('margin-left: auto')) alignment = 'right';
             else if (allStyles.includes('0px auto') || allStyles.includes('0 auto')) alignment = 'center';
-            else alignment = existingAlign || 'left';
+            else {
+              // Fallback: inherit text-align from parent paragraph/block element.
+              // When the user clicks an align button while a paragraph is selected (not the image),
+              // TipTap puts text-align on the <p> — propagate it to the image since display:block ignores it.
+              const parentAlign = (img.parentElement as HTMLElement | null)?.style?.textAlign;
+              alignment = (parentAlign && parentAlign !== "start" ? parentAlign : null) ?? existingAlign ?? 'left';
+            }
           }
 
           const width = img.getAttribute("width");
