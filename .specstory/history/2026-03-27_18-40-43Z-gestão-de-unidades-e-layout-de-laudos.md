@@ -12878,11 +12878,44 @@ remova o tip abaixo dos input header e footer
 
 _**Agent (claude-4.6-sonnet-medium-thinking)**_
 
+<think><details><summary>Thought Process</summary>
+The user wants to remove the tip/hint text below the header and footer inputs in UnitSheet.tsx.</details></think>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
 <tool-use data-tool-type="unknown" data-tool-name="ripgrep_raw_search">
 <details>
 <summary>Tool use: **ripgrep_raw_search**</summary>
 
-Status: **loading**
+
+Parameters:
+
+```json
+{
+  "caseInsensitive": false,
+  "path": "c:\\Users\\haytt\\OneDrive\\Documentos\\Projetos Saas\\radflow\\components\\configuracoes\\UnitSheet.tsx",
+  "pattern": "190 mm|largura imprimível|imprimível"
+}
+```
+Additional data:
+
+```json
+{
+  "isPruned": true,
+  "outputMode": "content",
+  "path": "c:\\Users\\haytt\\OneDrive\\Documentos\\Projetos Saas\\radflow\\components\\configuracoes\\UnitSheet.tsx",
+  "pattern": "190 mm|largura imprimível|imprimível",
+  "topFiles": [
+    {
+      "matchCount": 2,
+      "uri": "components\\configuracoes\\UnitSheet.tsx"
+    }
+  ],
+  "totalFiles": 1,
+  "totalMatches": 2
+}
+```
+Status: **completed**
 
 
 </details>
@@ -12896,7 +12929,7 @@ Status: **loading**
 _**Agent (claude-4.6-sonnet-medium-thinking)**_
 
 <tool-use data-tool-type="read" data-tool-name="read_file_v2">
-<details><summary>Tool use: **read_file_v2** • Read file: </summary>
+<details><summary>Tool use: **read_file_v2** • Read file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\configuracoes\UnitSheet.tsx</summary>
 
 </details>
 </tool-use>
@@ -12912,8 +12945,6 @@ _**Agent (claude-4.6-sonnet-medium-thinking)**_
 
 <details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\configuracoes\UnitSheet.tsx</summary>
 
-Status: **loading**
-
 </details>
 
 </tool-use>
@@ -12929,7 +12960,176 @@ _**Agent (claude-4.6-sonnet-medium-thinking)**_
 
 <details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\configuracoes\UnitSheet.tsx</summary>
 
-Status: **loading**
+</details>
+
+</tool-use>
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Pronto, os dois tips removidos dos campos de cabeçalho e rodapé.
+
+---
+
+_**User**_
+
+faço o git add . e push
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git status && git log --oneline -5</summary>
+
+```bash
+cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git status && git log --oneline -5
+```
+
+```
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git restore &lt;file&gt;..." to discard changes in working directory)
+	modified:   .specstory/history/2026-03-27_17-10-17Z-action-buttons-tooltip-and-label-modification.md
+	modified:   .specstory/statistics.json
+	modified:   app/(print)/laudos/[requestId]/[itemId]/imprimir/PrintLayoutManager.tsx
+	modified:   app/(print)/laudos/[requestId]/[itemId]/imprimir/page.tsx
+	modified:   app/(protected)/configuracoes/unidades/UnitsClient.tsx
+	modified:   app/(protected)/configuracoes/unidades/page.tsx
+	modified:   components/configuracoes/UnitSheet.tsx
+	modified:   components/ui/rich-text-editor.tsx
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+	".specstory/history/2026-03-27_18-40-43Z-gest\303\243o-de-unidades-e-layout-de-laudos.md"
+	components/laudos/LaudoDocumentPreview.tsx
+	components/laudos/LaudoPrintLayout.tsx
+	components/laudos/render-print-html.ts
+	lib/laudos/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+d9e43d4 chore: update specstory history and statistics
+744d06f docs: update documentation with new component folder structure
+691eeef refactor: reorganize components folder structure by module/page
+85cc943 chore: sync remaining changes (vscode settings, plano page, subscription alert, proxy, specstory)
+f2d698b feat: add reusable ActionButton component and standardize table action buttons
+
+```
+</details>
+</tool-use>
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"><details>
+<summary>Tool use: **run_terminal_command_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add . && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+feat: add A4 print preview to unit sheet and fix image/text alignment in rich text editor
+
+- Add LaudoPrintLayout as reusable report layout component (header, body, signature, footer fixed at bottom)
+- Add LaudoDocumentPreview with ResizeObserver-based scale to fit A4 preview in available space
+- Add render-print-html utility to normalize img alignment (margin-based) and replace template variables
+- Integrate two-column layout in UnitSheet (scrollable form + fixed A4 preview)
+- Propagate parent paragraph text-align to <img> in onUpdate and renderPrintHtml (fixes alignment buttons)
+- Refactor PrintLayoutManager to re-export LaudoPrintLayout; update imprimir/page.tsx imports
+- Pass profile data from units page server component down to UnitSheet for preview rendering
+- Remove width hints below header/footer editors
+EOF
+)" && git push</summary>
+
+```bash
+cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add . && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+feat: add A4 print preview to unit sheet and fix image/text alignment in rich text editor
+
+- Add LaudoPrintLayout as reusable report layout component (header, body, signature, footer fixed at bottom)
+- Add LaudoDocumentPreview with ResizeObserver-based scale to fit A4 preview in available space
+- Add render-print-html utility to normalize img alignment (margin-based) and replace template variables
+- Integrate two-column layout in UnitSheet (scrollable form + fixed A4 preview)
+- Propagate parent paragraph text-align to <img> in onUpdate and renderPrintHtml (fixes alignment buttons)
+- Refactor PrintLayoutManager to re-export LaudoPrintLayout; update imprimir/page.tsx imports
+- Pass profile data from units page server component down to UnitSheet for preview rendering
+- Remove width hints below header/footer editors
+EOF
+)" && git push
+```
+
+```
+[master bbc6bc7] feat: add A4 print preview to unit sheet and fix image/text alignment in rich text editor
+ 13 files changed, 13985 insertions(+), 426 deletions(-)
+ create mode 100644 ".specstory/history/2026-03-27_18-40-43Z-gest\303\243o-de-unidades-e-layout-de-laudos.md"
+ create mode 100644 components/laudos/LaudoDocumentPreview.tsx
+ create mode 100644 components/laudos/LaudoPrintLayout.tsx
+ create mode 100644 components/laudos/render-print-html.ts
+ create mode 100644 lib/laudos/render-print-html.ts
+warning: in the working copy of '.specstory/history/2026-03-27_17-10-17Z-action-buttons-tooltip-and-label-modification.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.specstory/statistics.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(print)/laudos/[requestId]/[itemId]/imprimir/PrintLayoutManager.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(print)/laudos/[requestId]/[itemId]/imprimir/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/configuracoes/unidades/UnitsClient.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/(protected)/configuracoes/unidades/page.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/configuracoes/UnitSheet.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/ui/rich-text-editor.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.specstory/history/2026-03-27_18-40-43Z-gestão-de-unidades-e-layout-de-laudos.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/laudos/LaudoDocumentPreview.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/laudos/LaudoPrintLayout.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/laudos/render-print-html.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/laudos/render-print-html.ts', LF will be replaced by CRLF the next time Git touches it
+To https://github.com/hayttle/radflow.git
+   d9e43d4..bbc6bc7  master -&gt; master
+
+```
+</details>
+</tool-use>
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"><details>
+<summary>Tool use: **run_terminal_command_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Commit `bbc6bc7` enviado com sucesso para o `origin/master`. O push incluiu 13 arquivos alterados/criados, cobrindo todo o trabalho desta sessão: preview A4, layout do laudo, correção de alinhamento e as demais mudanças.
+
+---
+
+_**User**_
+
+@components/laudos/LaudoDocumentPreview.tsx diminua o padding do preview
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\laudos\LaudoDocumentPreview.tsx</summary>
+
+</details>
+</tool-use>
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+O container externo não tem padding — o "espaço" que aparece é o `availW - 16` e `availH - 44` que reservam margem ao redor da folha. Vou reduzir esse desconto para deixar a folha maior e mais próxima das bordas:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\laudos\LaudoDocumentPreview.tsx</summary>
 
 </details>
 
@@ -12939,3 +13139,198 @@ Status: **loading**
 <summary>Tool use: **edit_file_v2**</summary>
 
 </details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Pronto. O espaço ao redor da folha foi reduzido de 16/44 px para 8 px em todas as direções, então a folha A4 vai ocupar quase todo o espaço disponível da coluna de preview.
+
+---
+
+_**User**_
+
+nao surtiu efeito, 
+fora da folha existe um espaco, onde define isso?
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<think><details><summary>Thought Process</summary>
+The user is saying the padding change didn't have an effect - there's still space outside the A4 sheet. Let me check where this space is defined. The space around the paper might be coming from the `UnitSheet.tsx` preview column padding (`p-3`), not from `LaudoDocumentPreview.tsx`.</details></think>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+O espaço provavelmente vem do padding da coluna de preview no `UnitSheet.tsx`, não do componente em si:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="unknown" data-tool-name="ripgrep_raw_search">
+<details>
+<summary>Tool use: **ripgrep_raw_search**</summary>
+
+
+Parameters:
+
+```json
+{
+  "caseInsensitive": false,
+  "path": "c:\\Users\\haytt\\OneDrive\\Documentos\\Projetos Saas\\radflow\\components\\configuracoes\\UnitSheet.tsx",
+  "pattern": "preview|border-l|flex-1.*overflow"
+}
+```
+Additional data:
+
+```json
+{
+  "isPruned": true,
+  "outputMode": "content",
+  "path": "c:\\Users\\haytt\\OneDrive\\Documentos\\Projetos Saas\\radflow\\components\\configuracoes\\UnitSheet.tsx",
+  "pattern": "preview|border-l|flex-1.*overflow",
+  "topFiles": [
+    {
+      "matchCount": 6,
+      "uri": "components\\configuracoes\\UnitSheet.tsx"
+    }
+  ],
+  "totalFiles": 1,
+  "totalMatches": 6
+}
+```
+Status: **completed**
+
+
+</details>
+</tool-use>
+
+<tool-use data-tool-type="unknown" data-tool-name="ripgrep_raw_search"><details>
+<summary>Tool use: **ripgrep_raw_search**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+É o `p-3` (12px) na linha 175. Vou reduzir:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\configuracoes\UnitSheet.tsx</summary>
+
+</details>
+
+</tool-use>
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+O `p-3` (12 px) virou `p-1` (4 px). Agora a folha A4 vai crescer e quase tocar as bordas da coluna de preview.
+
+---
+
+_**User**_
+
+ainda nao é isso
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<think><details><summary>Thought Process</summary>
+The user is saying the space is still there. Let me look at the full UnitSheet.tsx to understand the full layout structure, and also look at LaudoDocumentPreview.tsx to see if there's additional padding/margin somewhere.</details></think>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Deixa eu ver o layout completo para identificar onde está o espaço:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\configuracoes\UnitSheet.tsx</summary>
+
+</details>
+</tool-use>
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<think><details><summary>Thought Process</summary>
+The space outside the paper could be coming from the gray background container in `LaudoDocumentPreview.tsx` - specifically the `bg-gray-300 rounded-lg` div. The space between the gray background and the paper is defined in the component by the `availW - 8` and `availH - 8`. 
+
+But the user says this change didn't work. Let me look at the full `LaudoDocumentPreview.tsx` again to see if the gray container itself has any padding.
+
+Looking at the component:
+```tsx
+<div ref={containerRef} className="w-full h-full bg-gray-300 rounded-lg flex flex-col justify-center items-center">
+
+
+```
+
+There's no padding on this div. The space comes from the scale calculation: `availW - 8` / `availH - 8`. The paper is centered using `justify-center items-center`. The space around the paper is the gray area that the paper doesn't fill.
+
+The user probably wants to remove the gray area entirely, or make the paper fill almost all of it. The issue is that `Math.min(availW/A4_WIDTH, availH/A4_HEIGHT)` makes the paper fit within the container, so there will always be gray space on the sides (in width) or top/bottom (in height) depending on the aspect ratio of the container versus the A4 dimensions.
+
+Depending on whether the preview column is narrower or wider than the A4 aspect ratio, the paper either fits to width with gray space top and bottom, or fits to height with gray space on the sides. The real issue is probably the visible gray `bg-gray-300` border around the white A4 sheet—the user wants the paper to fill the entire preview area with minimal or no gray padding. The simplest fix would be to remove the gray background container entirely.
+
+```
+But wait, there's another possibility: the column div has `p-1` padding, the `LaudoDocumentPreview` takes up the full width and height, and inside that component there's a gray container centering the paper with margins. The paper itself is scaled down by 8px to fit, which leaves visible gray space around it. That's likely what the user is seeing and wants reduced.
+``` Wait, but earlier I changed `availW - 16` to `availW - 8` and `availH - 44` to `availH - 8`. So the paper should be very close to filling the container now (minus 4px each side from the 8px total reduction). But the user says it didn't work.
+
+Hmm. Let me think. Maybe the issue is that the container itself is `bg-gray-300` and fills the whole column, and the paper (which is smaller) is centered within it, showing lots of gray. The 8px reduction only accounts for the paper to not overflow, but the available space might mean the paper is much smaller than the container.
+
+Let me work through the math with a concrete example. If the container is 600px wide and 900px tall, I'd subtract 8px from each dimension to get 592px and 892px. Then I'd calculate the scale factors based on the standard A4 dimensions—the width constraint gives me 0.745 and the height gives me 0.794, so I'd use the smaller value of 0.745. That scales the paper down to about 591px wide and 837px tall, leaving roughly 31.5px of gray on the top and bottom. So the paper is actually fitting pretty well—the gray border is there but not excessive.
+
+But if the column is wider, say 700px, then the available width becomes 692px, which scales to 630px for the paper, leaving 35px of gray on each side. For very wide containers, this creates</details></think>
+
+---
+
+_**User**_
+
+na parte cinza
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<think><details><summary>Thought Process</summary>
+The user is pointing to the gray area around the A4 preview paper. This gray background is coming from `LaudoDocumentPreview.tsx` where the container has `bg-gray-300`. The gray space is because the paper (A4 scaled) doesn't fill the entire container - there's empty gray space above/below or around it.
+
+The container has `justify-center items-center` which centers the paper. So the gray shows around it. If the user wants less gray space, I should either:
+1. Remove the gray background entirely
+2. Or make the paper fill more of the container
+
+Actually looking at `LaudoDocumentPreview.tsx`, the container is:
+
+
+Setting up the container with a gray background and centering the paper inside it. The paper calculation deducts only 8px, so the gray background on the container is what's showing around the scaled A4 page. The user mentioned "na parte cinza" - the gray part - so they're seeing extra space there. Looking at `LaudoPrintLayout`, it has a max-width constraint that might be limiting how much space the paper actually takes up. I'm realizing the gray area the user mentioned is likely from the preview container itself—since it's set to fill the entire height with `h-full` and centers the paper with flexbox, any extra vertical space creates gray padding above and below the document. The scale calculation is probably cutting off, but it's determining how much to zoom based on available width and height. The user is saying the gray area still has extra space around the white A4 paper. The issue is that the gray container itself fills the entire preview area with `bg-gray-300`, and even though the paper is centered, there's still visible gray padding. I think the simplest solution is to remove the gray background entirely and just display the white paper directly without the container styling.</details></think>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+O cinza é o `bg-gray-300` no container do `LaudoDocumentPreview`, que aparece ao redor do papel porque o container é maior que o papel. A solução mais limpa é remover o fundo cinza e deixar o papel A4 preencher diretamente:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\laudos\LaudoDocumentPreview.tsx</summary>
+
+</details>
+
+</tool-use>
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Pronto — o fundo cinza foi removido. O papel A4 branco agora aparece diretamente sobre o fundo da interface, com apenas a sombra (`box-shadow`) para dar profundidade.
