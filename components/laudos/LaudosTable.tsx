@@ -12,8 +12,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Clock, CheckCircle2, AlertCircle, Printer, Eye } from "lucide-react";
-import { DataTable } from "@/components/data-table";
-import type { DataTableColumn } from "@/components/data-table";
+import { DataTable } from "@/components/shared/data-table";
+import type { DataTableColumn } from "@/components/shared/data-table";
 
 export type LaudoRequestRow = {
   id: string;

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { PageContainer } from "@/components/page-container";
-import { PageHeader } from "@/components/page-header";
+import { PageContainer } from "@/components/shared/page-container";
+import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";

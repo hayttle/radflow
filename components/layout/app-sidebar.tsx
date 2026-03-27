@@ -15,9 +15,9 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { UserProfile } from "@/components/user-profile";
-import { AdminProfileDropdown } from "@/components/admin-profile-dropdown";
+import { ThemeSwitcher } from "@/components/layout/theme-switcher";
+import { UserProfile } from "@/components/layout/user-profile";
+import { AdminProfileDropdown } from "@/components/admin/admin-profile-dropdown";
 import {
   FileText,
   Users,

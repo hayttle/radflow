@@ -1,8 +1,8 @@
 "use client";
 
-import { DataTable } from "@/components/data-table";
-import { RoleSwitcher } from "@/components/role-switcher";
-import { UserActiveToggle } from "@/components/user-active-toggle";
+import { DataTable } from "@/components/shared/data-table";
+import { RoleSwitcher } from "@/components/admin/role-switcher";
+import { UserActiveToggle } from "@/components/admin/user-active-toggle";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

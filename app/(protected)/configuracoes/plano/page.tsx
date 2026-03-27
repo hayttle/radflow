@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { PageContainer } from "@/components/page-container";
-import { PageHeader } from "@/components/page-header";
+import { PageContainer } from "@/components/shared/page-container";
+import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

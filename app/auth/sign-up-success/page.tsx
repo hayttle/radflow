@@ -1,4 +1,4 @@
-import { AuthLayoutWrapper } from "@/components/auth-layout-wrapper";
+import { AuthLayoutWrapper } from "@/components/auth/auth-layout-wrapper";
 
 export default function Page() {
   return (

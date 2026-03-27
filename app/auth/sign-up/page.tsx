@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { SignUpForm } from "@/components/sign-up-form";
-import { AuthLayoutWrapper } from "@/components/auth-layout-wrapper";
+import { SignUpForm } from "@/components/auth/sign-up-form";
+import { AuthLayoutWrapper } from "@/components/auth/auth-layout-wrapper";
 import { getAvailablePlans } from "@/lib/plans";
 
 async function SignUpWithPlans() {

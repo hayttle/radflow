@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { PageContainer } from "@/components/page-container";
-import { PageHeader } from "@/components/page-header";
+import { PageContainer } from "@/components/shared/page-container";
+import { PageHeader } from "@/components/shared/page-header";
 import { NovoLaudoForm } from "@/components/laudos/NovoLaudoForm";
 
 export const metadata = {

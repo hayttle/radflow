@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { PageContainer } from "@/components/page-container";
+import { PageContainer } from "@/components/shared/page-container";
 import { UnitsClient } from "./UnitsClient";
 
 export const metadata = { title: "Unidades | RadFlow" };

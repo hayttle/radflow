@@ -1,7 +1,7 @@
 "use client";
 
-import { DataTable } from "@/components/data-table";
-import { FeedbackStatusSwitcher } from "@/components/feedback-status-switcher";
+import { DataTable } from "@/components/shared/data-table";
+import { FeedbackStatusSwitcher } from "@/components/admin/feedback-status-switcher";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

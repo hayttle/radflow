@@ -1,5 +1,5 @@
-import { LoginForm } from "@/components/login-form";
-import { AuthLayoutWrapper } from "@/components/auth-layout-wrapper";
+import { LoginForm } from "@/components/auth/login-form";
+import { AuthLayoutWrapper } from "@/components/auth/auth-layout-wrapper";
 import { Suspense } from "react";
 
 async function LoginContent({

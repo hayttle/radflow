@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FeedbackStatusSwitcher } from "@/components/feedback-status-switcher";
+import { FeedbackStatusSwitcher } from "@/components/admin/feedback-status-switcher";
 
 interface FeedbackKanbanItemProps {
   feedback: any;

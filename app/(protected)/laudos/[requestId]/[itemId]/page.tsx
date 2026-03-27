@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
-import { PageContainer } from "@/components/page-container";
+import { PageContainer } from "@/components/shared/page-container";
 import { LaudoEditor } from "@/components/laudos/LaudoEditor";
 import type { ExamFormSnapshot, TemplateVariable } from "@/types/supabase";
 

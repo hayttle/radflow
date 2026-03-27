@@ -7,10 +7,10 @@ import { Plus, Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/action-button";
-import { PageHeader } from "@/components/page-header";
-import { DataTable } from "@/components/data-table";
-import type { DataTableColumn } from "@/components/data-table";
-import { DataPagination } from "@/components/data-pagination";
+import { PageHeader } from "@/components/shared/page-header";
+import { DataTable } from "@/components/shared/data-table";
+import type { DataTableColumn } from "@/components/shared/data-table";
+import { DataPagination } from "@/components/shared/data-pagination";
 import { PatientsFilter } from "@/components/pacientes/PatientsFilter";
 import { PatientSheet } from "@/components/pacientes/PatientSheet";
 import type { Patient } from "@/types/supabase";

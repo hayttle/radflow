@@ -1,6 +1,6 @@
-import { AdminSidebar } from "@/components/admin-sidebar";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import { AdminProfileDropdown } from "@/components/admin-profile-dropdown";
+import { AdminProfileDropdown } from "@/components/admin/admin-profile-dropdown";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";

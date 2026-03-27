@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { OnboardingChecklist } from "@/components/onboarding-checklist";
+import { OnboardingChecklist } from "@/components/onboarding/onboarding-checklist";
 import { getOnboardingStatus } from "./actions";
 
 export const metadata = { title: "Boas-vindas | RadFlow" };

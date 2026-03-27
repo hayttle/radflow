@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { PageHeader } from "@/components/page-header";
-import { PlansTableClient } from "@/components/plans-table-client";
+import { PageHeader } from "@/components/shared/page-header";
+import { PlansTableClient } from "@/components/admin/plans-table-client";
 
 export const metadata = { title: "Planos de Assinatura | Admin" };
 

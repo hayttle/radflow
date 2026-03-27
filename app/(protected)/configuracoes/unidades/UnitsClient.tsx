@@ -4,13 +4,13 @@ import { useState, useTransition } from "react";
 import { Plus, Pencil, Trash, Building2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionButton } from "@/components/ui/action-button";
-import { PageHeader } from "@/components/page-header";
+import { PageHeader } from "@/components/shared/page-header";
 import { deleteUnit } from "./actions";
 import { toast } from "sonner";
 import type { Unit } from "@/types/supabase";
 import { UnitSheet } from "@/components/configuracoes/UnitSheet";
-import { DataTable } from "@/components/data-table";
-import type { DataTableColumn } from "@/components/data-table";
+import { DataTable } from "@/components/shared/data-table";
+import type { DataTableColumn } from "@/components/shared/data-table";
 import { DeleteConfirmDialog } from "@/components/ui/delete-confirm-dialog";
 
 export function UnitsClient({ units }: { units: Unit[] }) {

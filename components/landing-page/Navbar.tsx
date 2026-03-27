@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { ThemeSwitcher } from "@/components/theme-switcher"
+import { ThemeSwitcher } from "@/components/layout/theme-switcher"
 
 export function Navbar() {
   return (

@@ -1,7 +1,7 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import { UserProfile } from "@/components/user-profile";
-import { UnitSwitcher } from "@/components/unit-switcher";
+import { UserProfile } from "@/components/layout/user-profile";
+import { UnitSwitcher } from "@/components/layout/unit-switcher";
 import { UnitProvider } from "@/contexts/unit-context";
 import { OnboardingProvider } from "@/components/onboarding/onboarding-provider";
 import { OnboardingTracker } from "@/components/onboarding/onboarding-tracker";

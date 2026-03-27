@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { UserTableClient } from "@/components/user-table-client";
-import { PageHeader } from "@/components/page-header";
+import { UserTableClient } from "@/components/admin/user-table-client";
+import { PageHeader } from "@/components/shared/page-header";
 
 export const metadata = { title: "Gerenciar Usuários | Admin" };
 

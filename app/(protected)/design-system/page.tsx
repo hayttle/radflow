@@ -50,7 +50,7 @@ import {
 } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PageContainer } from "@/components/page-container";
+import { PageContainer } from "@/components/shared/page-container";
 
 export default function DesignSystemPage() {
   const [progressValue, setProgressValue] = useState(13);

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
-import { PageHeader } from "@/components/page-header";
-import { FeedbackTableClient } from "@/components/feedback-table-client";
-import { FeedbackKanbanClient } from "@/components/feedback-kanban-client";
+import { PageHeader } from "@/components/shared/page-header";
+import { FeedbackTableClient } from "@/components/admin/feedback-table-client";
+import { FeedbackKanbanClient } from "@/components/admin/feedback-kanban-client";
 import { LayoutGrid, List } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 

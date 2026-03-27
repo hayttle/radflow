@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { PageContainer } from "@/components/page-container";
+import { PageContainer } from "@/components/shared/page-container";
 import { ModelsClient } from "./ModelsClient";
 
 export const metadata = { title: "Modelos de Exame | RadFlow" };
