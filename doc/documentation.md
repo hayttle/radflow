@@ -32,252 +32,323 @@ Sistema SaaS de emissão e gestão de laudos radiológicos, voltado para clínic
 
 ---
 
+## 📁 Estrutura de Componentes
+
+```
+components/
+├── ui/               # Primitivos de UI (shadcn/Radix) — usados em todo o app
+├── shared/           # Componentes de layout genérico reutilizados em todas as páginas
+├── layout/           # Componentes do shell do app protegido (sidebar, header)
+├── auth/             # Formulários e wrappers das rotas de autenticação
+├── admin/            # Tabelas, kanbans e sidebars do painel super_admin
+├── onboarding/       # Checklist, provider e tracker do onboarding
+├── configuracoes/    # Sheets e filtros das configurações (modelos, frases, unidades, plano)
+├── laudos/           # Editor, tabelas e extensões TipTap do módulo de laudos
+├── pacientes/        # Sheet e filtro do módulo de pacientes
+├── landing-page/     # Seções da landing page de marketing
+└── seo/              # JsonLd para structured data
+```
+
+### `components/shared/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `data-table.tsx` | Todas as páginas com listagem | Tabela genérica tipada (`DataTableColumn<T>`) |
+| `data-pagination.tsx` | Laudos, pacientes, modelos | Paginação via query string |
+| `data-filter.tsx` | Laudos | Filtro de status + intervalo de datas |
+| `page-header.tsx` | Todas as páginas protegidas e admin | Título, descrição e slot de ações |
+| `page-container.tsx` | Todas as páginas protegidas | Container com padding consistente |
+
+### `components/layout/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `app-sidebar.tsx` | `app/(protected)/layout.tsx` | Navegação lateral principal + feedback modal |
+| `unit-switcher.tsx` | `app/(protected)/layout.tsx` | Seleção de unidade ativa (cookie + context) |
+| `user-profile.tsx` | `app/(protected)/layout.tsx` | Avatar e dropdown do usuário |
+| `theme-switcher.tsx` | App sidebar, admin sidebar, navbar | Toggle light/dark mode |
+| `feedback-modal.tsx` | `app-sidebar.tsx` | Modal de envio de feedback ao time |
+
+### `components/auth/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `login-form.tsx` | `app/auth/login` | Formulário de login |
+| `sign-up-form.tsx` | `app/auth/sign-up` | Formulário de cadastro |
+| `forgot-password-form.tsx` | `app/auth/forgot-password` | Recuperação de senha |
+| `update-password-form.tsx` | `app/auth/update-password` | Definição de nova senha |
+| `auth-layout-wrapper.tsx` | Páginas de auth | Wrapper visual das telas de auth |
+| `logout-button.tsx` | `auth-button.tsx` | Botão de encerrar sessão |
+| `auth-button.tsx` | *(legado — não utilizado em produção)* | Botão de auth do template original |
+
+### `components/admin/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `admin-sidebar.tsx` | `app/(admin)/layout.tsx` | Navegação lateral do painel admin |
+| `admin-profile-dropdown.tsx` | Admin sidebar e layout | Menu do usuário admin |
+| `user-table-client.tsx` | `/admin/usuarios` | Tabela de usuários da plataforma |
+| `role-switcher.tsx` | `user-table-client.tsx` | Altera role do usuário |
+| `user-active-toggle.tsx` | `user-table-client.tsx` | Ativa/desativa conta |
+| `plans-table-client.tsx` | `/admin/planos` | CRUD visual de planos Stripe |
+| `feedback-table-client.tsx` | `/admin/feedbacks` | Tabela de feedbacks recebidos |
+| `feedback-kanban-client.tsx` | `/admin/feedbacks` | Kanban de feedbacks (drag-and-drop) |
+| `feedback-kanban-item.tsx` | `feedback-kanban-client.tsx` | Card individual do kanban |
+| `feedback-status-switcher.tsx` | Tabela e kanban de feedbacks | Troca de status do feedback |
+
+### `components/onboarding/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `onboarding-checklist.tsx` | `/onboarding` | Passos e progresso do onboarding |
+| `onboarding-provider.tsx` | `app/(protected)/layout.tsx` | Context global do estado do onboarding |
+| `onboarding-tracker.tsx` | `app/(protected)/layout.tsx` | Barra de progresso no rodapé do layout |
+
+### `components/configuracoes/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `ModelSheet.tsx` | `/configuracoes/modelos` | Sheet criar/editar modelo de exame |
+| `ModelsFilter.tsx` | `/configuracoes/modelos` | Busca e filtro por unidade |
+| `PhraseSheet.tsx` | `/configuracoes/frases` | Sheet criar/editar frase padrão |
+| `PhrasesFilter.tsx` | `/configuracoes/frases` | Filtro por categoria |
+| `UnitSheet.tsx` | `/configuracoes/unidades` | Sheet criar/editar unidade |
+| `plano/subscription-alert.tsx` | `/configuracoes/plano` | Alerta de trial/expiração |
+| `plano/manage-subscription-button.tsx` | `/configuracoes/plano` | Abre portal Stripe |
+
+### `components/laudos/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `LaudoEditor.tsx` | `/laudos/[requestId]/[itemId]` | Shell do editor: status, seções, salvar/finalizar |
+| `LaudoRichTextEditor.tsx` | Editor e assinatura | Editor TipTap com toolbars |
+| `LaudoVariablesPanel.tsx` | `LaudoEditor.tsx` | Painel lateral de variáveis do template |
+| `LaudosTable.tsx` | `/laudos` e `/dashboard` | Tabela de atendimentos com ações |
+| `LaudosUnitSync.tsx` | `/laudos` | Sincroniza unidade ativa com filtro da lista |
+| `NovoLaudoForm.tsx` | `/laudos/novo` | Formulário de criação de atendimento |
+| `VariableContext.tsx` | Editor de laudos | Context React das variáveis dinâmicas |
+| `extensions/VariableExtension.tsx` | TipTap | Nó customizado para variáveis inline |
+
+### `components/pacientes/`
+| Arquivo | Usado em | Função |
+|---------|----------|--------|
+| `PatientSheet.tsx` | `/pacientes` | Sheet criar/editar paciente |
+| `PatientsFilter.tsx` | `/pacientes` | Campo de busca por nome/CPF |
+
+### `components/landing-page/`
+| Arquivo | Função |
+|---------|--------|
+| `Navbar.tsx` | Barra de navegação + theme-switcher |
+| `Hero.tsx` | Seção principal com CTA |
+| `Features.tsx` | Funcionalidades do produto |
+| `ProblemSolution.tsx` | Problema × solução |
+| `Pricing.tsx` | Tabela de planos |
+| `FAQ.tsx` | Perguntas frequentes |
+| `FinalCTA.tsx` | CTA de conversão final |
+| `Footer.tsx` | Rodapé |
+
+---
+
 ## 🗂️ Mapa de Páginas × Componentes
 
 ### `/dashboard`
 **Função:** painel de métricas do dia — atendimentos, pendentes, concluídos e atalhos rápidos.  
 **Redireciona para** `/onboarding` se faltar unidade ou assinatura.
 
-| Componente | Papel |
-|-----------|-------|
-| `page-header.tsx` | Título e ações da página |
-| `data-table.tsx` | Últimos atendimentos |
-| `LaudosTable.tsx` | Tabela de atendimentos recentes |
+| Componente | Caminho |
+|-----------|---------|
+| `PageHeader` | `shared/page-header` |
+| `PageContainer` | `shared/page-container` |
+| `LaudosTable` | `laudos/LaudosTable` |
 
 ---
 
 ### `/onboarding`
 **Função:** checklist guiado — criar unidade, configurar perfil, criar primeiro modelo.
 
-| Componente | Papel |
-|-----------|-------|
-| `onboarding-checklist.tsx` | Passos e progresso |
-| `onboarding/onboarding-provider.tsx` | Estado global do onboarding |
-| `onboarding/onboarding-tracker.tsx` | Barra de progresso no layout |
+| Componente | Caminho |
+|-----------|---------|
+| `OnboardingChecklist` | `onboarding/onboarding-checklist` |
+| `OnboardingProvider` | `onboarding/onboarding-provider` |
+| `OnboardingTracker` | `onboarding/onboarding-tracker` |
 
 ---
 
 ### `/pacientes`
 **Função:** listagem paginada e busca de pacientes (nome/CPF). Criar e editar cadastros.
 
-| Componente | Papel |
-|-----------|-------|
-| `pacientes/PatientsFilter.tsx` | Campo de busca |
-| `pacientes/PatientSheet.tsx` | Sheet criar/editar paciente |
-| `data-table.tsx` | Tabela de pacientes |
-| `data-pagination.tsx` | Paginação |
-| `ui/action-button.tsx` | Botão de ação (Editar) na linha da tabela |
-| `page-header.tsx` | Título + botão "Novo Paciente" |
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `DataTable` | `shared/data-table` |
+| `DataPagination` | `shared/data-pagination` |
+| `PatientsFilter` | `pacientes/PatientsFilter` |
+| `PatientSheet` | `pacientes/PatientSheet` |
+| `ActionButton` | `ui/action-button` |
 
 ---
 
 ### `/laudos`
-**Função:** lista de todos os atendimentos/laudos com filtro de status, data e unidade.
+**Função:** lista de todos os atendimentos com filtro de status, data e unidade.
 
-| Componente | Papel |
-|-----------|-------|
-| `laudos/LaudosTable.tsx` | Tabela com ações (abrir, imprimir) |
-| `laudos/LaudosUnitSync.tsx` | Sincroniza unidade ativa com o filtro |
-| `data-filter.tsx` | Filtro status + intervalo de datas |
-| `data-pagination.tsx` | Paginação |
-| `ui/action-button.tsx` | Ações (Imprimir) na tabela |
-| `ui/badge.tsx` | Badge de status do atendimento |
-| `page-header.tsx` | Título + botão "Novo Atendimento" |
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `DataPagination` | `shared/data-pagination` |
+| `DataFilter` | `shared/data-filter` |
+| `LaudosTable` | `laudos/LaudosTable` |
+| `LaudosUnitSync` | `laudos/LaudosUnitSync` |
 
 ---
 
 ### `/laudos/novo`
-**Função:** formulário para criar novo atendimento — selecionar paciente, unidade, data e modelos.
+**Função:** formulário para criar novo atendimento — paciente, unidade, data e modelos.
 
-| Componente | Papel |
-|-----------|-------|
-| `laudos/NovoLaudoForm.tsx` | Formulário completo de criação |
-| `ui/select.tsx` | Seleção de paciente, unidade e modelo |
-| `ui/input.tsx` | Data e campos livres |
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `NovoLaudoForm` | `laudos/NovoLaudoForm` |
 
 ---
 
 ### `/laudos/[requestId]/[itemId]`
-**Função:** editor de laudo — preencher campos, inserir variáveis e frases, finalizar e imprimir.
+**Função:** editor de laudo — variáveis, frases, finalizar e imprimir.
 
-| Componente | Papel |
-|-----------|-------|
-| `laudos/LaudoEditor.tsx` | Shell principal: status, seções, salvar/finalizar |
-| `laudos/LaudoRichTextEditor.tsx` | Editor TipTap com toolbars |
-| `laudos/LaudoVariablesPanel.tsx` | Painel lateral de variáveis do template |
-| `laudos/VariableContext.tsx` | Context das variáveis no editor |
-| `laudos/extensions/VariableExtension.tsx` | Nó TipTap para variáveis inline |
-| `ui/badge.tsx` | Status do laudo |
-| `ui/button.tsx` | Ações de salvar, finalizar, imprimir |
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `LaudoEditor` | `laudos/LaudoEditor` |
+| `LaudoRichTextEditor` | `laudos/LaudoRichTextEditor` |
+| `LaudoVariablesPanel` | `laudos/LaudoVariablesPanel` |
+| `VariableContext` | `laudos/VariableContext` |
+| `VariableExtension` | `laudos/extensions/VariableExtension` |
 
 ---
 
-### `/(print)/laudos/[requestId]/[itemId]/imprimir`
-**Função:** layout A4 de impressão do laudo finalizado.
-
-| Componente | Papel |
-|-----------|-------|
-| *(layout próprio sem sidebar)* | Renderiza HTML do laudo formatado para A4 |
+### `/(print)/laudos/.../imprimir`
+**Função:** layout A4 de impressão (sem sidebar).
 
 ---
 
 ### `/configuracoes/perfil`
-**Função:** editar dados do perfil (nome, CRM).
-
-| Componente | Papel |
-|-----------|-------|
-| `ui/input.tsx`, `ui/button.tsx` | Formulário de perfil |
-| `page-header.tsx` | Título da seção |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
 
 ### `/configuracoes/assinatura`
-**Função:** upload e configuração da assinatura digital para inserção nos laudos.
-
-| Componente | Papel |
-|-----------|-------|
-| `laudos/LaudoRichTextEditor.tsx` | Editor da assinatura |
-| `ui/button.tsx` | Salvar |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `LaudoRichTextEditor` | `laudos/LaudoRichTextEditor` |
 
 ### `/configuracoes/plano`
-**Função:** visualização do plano atual, datas e gerenciamento via Stripe.
-
-| Componente | Papel |
-|-----------|-------|
-| `configuracoes/plano/subscription-alert.tsx` | Alerta de trial/expiração |
-| `configuracoes/plano/manage-subscription-button.tsx` | Abre portal Stripe |
-| `ui/card.tsx` | Card de resumo do plano |
-| `page-header.tsx` | Título da seção |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `SubscriptionAlert` | `configuracoes/plano/subscription-alert` |
+| `ManageSubscriptionButton` | `configuracoes/plano/manage-subscription-button` |
 
 ### `/configuracoes/modelos`
-**Função:** CRUD de templates de exame com variáveis dinâmicas.
-
-| Componente | Papel |
-|-----------|-------|
-| `configuracoes/ModelsFilter.tsx` | Busca e filtro por unidade |
-| `configuracoes/ModelSheet.tsx` | Sheet criar/editar modelo |
-| `data-table.tsx` | Tabela de modelos |
-| `data-pagination.tsx` | Paginação |
-| `ui/action-button.tsx` | Ações (Editar, Duplicar, Excluir) |
-| `ui/delete-confirm-dialog.tsx` | Confirmação de exclusão |
-| `page-header.tsx` | Título + botão "Novo Modelo" |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `DataTable` | `shared/data-table` |
+| `DataPagination` | `shared/data-pagination` |
+| `ModelsFilter` | `configuracoes/ModelsFilter` |
+| `ModelSheet` | `configuracoes/ModelSheet` |
+| `ActionButton` | `ui/action-button` |
+| `DeleteConfirmDialog` | `ui/delete-confirm-dialog` |
 
 ### `/configuracoes/frases`
-**Função:** biblioteca de frases/autotexto por categoria para uso no editor de laudos.
-
-| Componente | Papel |
-|-----------|-------|
-| `configuracoes/PhrasesFilter.tsx` | Filtro por categoria |
-| `configuracoes/PhraseSheet.tsx` | Sheet criar/editar frase |
-| `data-table.tsx` | Tabela de frases |
-| `ui/action-button.tsx` | Ações (Editar, Excluir) |
-| `ui/delete-confirm-dialog.tsx` | Confirmação de exclusão |
-| `page-header.tsx` | Título + botão "Nova Frase" |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `DataTable` | `shared/data-table` |
+| `PhrasesFilter` | `configuracoes/PhrasesFilter` |
+| `PhraseSheet` | `configuracoes/PhraseSheet` |
+| `ActionButton` | `ui/action-button` |
+| `DeleteConfirmDialog` | `ui/delete-confirm-dialog` |
 
 ### `/configuracoes/unidades`
-**Função:** gestão de unidades de atendimento (clínicas) — dados, cabeçalho e rodapé de laudo.
-
-| Componente | Papel |
-|-----------|-------|
-| `configuracoes/UnitSheet.tsx` | Sheet criar/editar unidade |
-| `data-table.tsx` | Tabela de unidades |
-| `ui/action-button.tsx` | Ações (Editar, Excluir) |
-| `ui/delete-confirm-dialog.tsx` | Confirmação de exclusão |
-| `page-header.tsx` | Título + botão "Nova Unidade" |
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `DataTable` | `shared/data-table` |
+| `UnitSheet` | `configuracoes/UnitSheet` |
+| `ActionButton` | `ui/action-button` |
+| `DeleteConfirmDialog` | `ui/delete-confirm-dialog` |
 
 ---
 
 ### `/admin` (super_admin)
-**Função:** painel administrativo — métricas globais, links rápidos.
-
-| Componente | Papel |
-|-----------|-------|
-| `admin-sidebar.tsx` | Navegação admin |
-| `admin-profile-dropdown.tsx` | Menu do usuário admin |
-| `page-header.tsx` | Título |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `AdminSidebar` | `admin/admin-sidebar` |
+| `AdminProfileDropdown` | `admin/admin-profile-dropdown` |
+| `PageHeader` | `shared/page-header` |
 
 ### `/admin/usuarios`
-**Função:** listagem e gerenciamento de todos os usuários da plataforma.
-
-| Componente | Papel |
-|-----------|-------|
-| `user-table-client.tsx` | Tabela de usuários |
-| `role-switcher.tsx` | Altera role do usuário |
-| `user-active-toggle.tsx` | Ativa/desativa conta |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageHeader` | `shared/page-header` |
+| `UserTableClient` | `admin/user-table-client` |
+| `RoleSwitcher` | `admin/role-switcher` |
+| `UserActiveToggle` | `admin/user-active-toggle` |
 
 ### `/admin/planos`
-**Função:** CRUD de planos e preços Stripe.
-
-| Componente | Papel |
-|-----------|-------|
-| `plans-table-client.tsx` | Tabela + diálogo de criação/edição de planos |
-| `ui/action-button.tsx` | Ações (Editar, Excluir) |
-| `ui/delete-confirm-dialog.tsx` | Confirmação de exclusão |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageHeader` | `shared/page-header` |
+| `PlansTableClient` | `admin/plans-table-client` |
+| `ActionButton` | `ui/action-button` |
+| `DeleteConfirmDialog` | `ui/delete-confirm-dialog` |
 
 ### `/admin/assinaturas`
-**Função:** visão de todas as assinaturas ativas, trial e canceladas.
-
-| Componente | Papel |
-|-----------|-------|
-| `data-table.tsx` | Tabela de assinaturas |
-| `ui/badge.tsx` | Status da assinatura |
-
----
+| Componente | Caminho |
+|-----------|---------|
+| `PageContainer` | `shared/page-container` |
+| `PageHeader` | `shared/page-header` |
+| `DataTable` | `shared/data-table` |
 
 ### `/admin/feedbacks`
-**Função:** triagem e gestão de feedbacks enviados pelos usuários (lista + kanban).
-
-| Componente | Papel |
-|-----------|-------|
-| `feedback-table-client.tsx` | Tabela de feedbacks |
-| `feedback-kanban-client.tsx` | Kanban drag-and-drop |
-| `feedback-kanban-item.tsx` | Card do kanban |
-| `feedback-status-switcher.tsx` | Altera status do feedback |
-| `ui/tabs.tsx` | Alternar entre lista e kanban |
+| Componente | Caminho |
+|-----------|---------|
+| `PageHeader` | `shared/page-header` |
+| `FeedbackTableClient` | `admin/feedback-table-client` |
+| `FeedbackKanbanClient` | `admin/feedback-kanban-client` |
+| `FeedbackKanbanItem` | `admin/feedback-kanban-item` |
+| `FeedbackStatusSwitcher` | `admin/feedback-status-switcher` |
 
 ---
 
 ### Landing Page (`/`)
-**Função:** página de marketing e conversão.
-
-| Componente | Papel |
-|-----------|-------|
-| `landing-page/Navbar.tsx` | Barra de navegação + toggle de tema |
-| `landing-page/Hero.tsx` | Seção principal com CTA |
-| `landing-page/Features.tsx` | Funcionalidades do produto |
-| `landing-page/ProblemSolution.tsx` | Problema × solução |
-| `landing-page/Pricing.tsx` | Tabela de planos |
-| `landing-page/FAQ.tsx` | Perguntas frequentes |
-| `landing-page/FinalCTA.tsx` | CTA final |
-| `landing-page/Footer.tsx` | Rodapé |
-| `seo/JsonLd.tsx` | Structured data para SEO |
+| Componente | Caminho |
+|-----------|---------|
+| `Navbar` | `landing-page/Navbar` |
+| `Hero` | `landing-page/Hero` |
+| `Features` | `landing-page/Features` |
+| `ProblemSolution` | `landing-page/ProblemSolution` |
+| `Pricing` | `landing-page/Pricing` |
+| `FAQ` | `landing-page/FAQ` |
+| `FinalCTA` | `landing-page/FinalCTA` |
+| `Footer` | `landing-page/Footer` |
+| `JsonLd` | `seo/JsonLd` |
 
 ---
 
 ### Layout `(protected)` — compartilhado em todas as rotas protegidas
 
-| Componente | Papel |
-|-----------|-------|
-| `app-sidebar.tsx` | Navegação lateral + feedback modal |
-| `unit-switcher.tsx` | Seleção de unidade ativa (cookie + context) |
-| `user-profile.tsx` | Avatar e dropdown do usuário |
-| `feedback-modal.tsx` | Modal de envio de feedback |
-| `onboarding/onboarding-provider.tsx` | Estado global do onboarding |
-| `onboarding/onboarding-tracker.tsx` | Indicador de progresso no header |
+| Componente | Caminho |
+|-----------|---------|
+| `AppSidebar` | `layout/app-sidebar` |
+| `UnitSwitcher` | `layout/unit-switcher` |
+| `UserProfile` | `layout/user-profile` |
+| `ThemeSwitcher` | `layout/theme-switcher` |
+| `FeedbackModal` | `layout/feedback-modal` |
+| `OnboardingProvider` | `onboarding/onboarding-provider` |
+| `OnboardingTracker` | `onboarding/onboarding-tracker` |
 
 ---
 
@@ -300,13 +371,19 @@ Sistema SaaS de emissão e gestão de laudos radiológicos, voltado para clínic
 | Componente | Descrição |
 |-----------|-----------|
 | `action-button.tsx` | Botão ícone + tooltip para ações em tabelas; `ghost` com muted, cor só no hover |
-| `data-table.tsx` | Tabela genérica com colunas tipadas (`DataTableColumn<T>`) |
 | `delete-confirm-dialog.tsx` | Dialog de confirmação de exclusão com nome do item |
-| `page-header.tsx` | Header de página com título, descrição e slot de ações |
-| `data-pagination.tsx` | Paginação via query string |
-| `rich-text-editor.tsx` | Editor TipTap base (reexportado em `LaudoRichTextEditor`) |
+| `rich-text-editor.tsx` | Editor TipTap base (reexportado em `laudos/LaudoRichTextEditor`) |
 | `sheet.tsx` | Drawer lateral para formulários de criação/edição |
 | `badge.tsx` | Status chips com variantes (`default`, `secondary`, `outline`, `success`, `destructive`) |
+
+### Componentes Shared (`components/shared/`)
+| Componente | Descrição |
+|-----------|-----------|
+| `data-table.tsx` | Tabela genérica com colunas tipadas (`DataTableColumn<T>`) |
+| `data-pagination.tsx` | Paginação via query string (`?page=N`) |
+| `data-filter.tsx` | Filtro de status + intervalo de datas |
+| `page-header.tsx` | Header de página com título, descrição e slot de ações |
+| `page-container.tsx` | Wrapper com padding/max-width consistente |
 
 ---
 
