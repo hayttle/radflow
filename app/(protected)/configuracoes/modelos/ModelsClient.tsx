@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Plus, Pencil, Trash2, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActionButton } from "@/components/ui/action-button";
 import { PageHeader } from "@/components/page-header";
 import { DataTable } from "@/components/data-table";
 import type { DataTableColumn } from "@/components/data-table";
@@ -106,34 +107,23 @@ export function ModelsClient({
       className: "text-right",
       render: (row) => (
         <div className="flex justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5"
+          <ActionButton
+            icon={Pencil}
+            tooltip="Editar"
             onClick={() => handleEdit(row)}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-            Editar
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5"
+          />
+          <ActionButton
+            icon={Copy}
+            tooltip="Duplicar"
             onClick={() => handleDuplicate(row)}
-          >
-            <Copy className="h-3.5 w-3.5" />
-            Duplicar
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5 hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+          />
+          <ActionButton
+            icon={Trash2}
+            tooltip="Excluir"
+            variant="destructive"
             onClick={() => handleDeleteClick(row.id, row.title)}
             disabled={isPending}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-            Excluir
-          </Button>
+          />
         </div>
       ),
     },

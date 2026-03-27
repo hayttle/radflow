@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { Plus, Pencil, Trash, Building2, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ActionButton } from "@/components/ui/action-button";
 import { PageHeader } from "@/components/page-header";
 import { deleteUnit } from "./actions";
 import { toast } from "sonner";
@@ -89,25 +90,18 @@ export function UnitsClient({ units }: { units: Unit[] }) {
       className: "text-right",
       render: (row) => (
         <div className="flex justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5"
+          <ActionButton
+            icon={Pencil}
+            tooltip="Editar"
             onClick={() => handleEdit(row)}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-            Editar
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-1.5 hover:bg-destructive/10 hover:text-destructive text-muted-foreground"
+          />
+          <ActionButton
+            icon={Trash}
+            tooltip="Excluir"
+            variant="destructive"
             onClick={() => handleDeleteClick(row.id, row.name)}
             disabled={isPending}
-          >
-            <Trash className="h-3.5 w-3.5" />
-            Excluir
-          </Button>
+          />
         </div>
       ),
     },

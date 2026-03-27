@@ -5,7 +5,13 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Clock, CheckCircle2, AlertCircle, Printer, Eye } from "lucide-react";
+import { ActionButton } from "@/components/ui/action-button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Clock, CheckCircle2, AlertCircle, Printer, Eye } from "lucide-react";
 import { DataTable } from "@/components/data-table";
 import type { DataTableColumn } from "@/components/data-table";
 
@@ -73,25 +79,27 @@ const COLUMNS: DataTableColumn<LaudoRequestRow>[] = [
         : `/laudos/${row.id}`;
       return (
         <div className="flex items-center justify-end gap-1">
-          <Button asChild variant="ghost" size="icon" className="h-8 w-8" title="Abrir Laudo">
-            <Link href={href}>
-              <Eye className="h-4 w-4" />
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                <Link href={href}>
+                  <Eye className="h-4 w-4" />
+                  <span className="sr-only">Abrir Laudo</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Abrir Laudo</TooltipContent>
+          </Tooltip>
+          <ActionButton
+            icon={Printer}
+            tooltip="Imprimir Laudo"
             disabled={row.status !== "completed"}
-            title="Imprimir Laudo"
             onClick={() => {
               if (firstItemId) {
                 window.open(`/laudos/${row.id}/${firstItemId}/imprimir`, "_blank");
               }
             }}
-          >
-            <Printer className="h-4 w-4" />
-          </Button>
+          />
         </div>
       );
     },

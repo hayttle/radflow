@@ -16,7 +16,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { DeleteConfirmDialog } from "@/components/ui/delete-confirm-dialog";
-import { Pencil, Plus, DollarSign } from "lucide-react";
+import { ActionButton } from "@/components/ui/action-button";
+import { Pencil, Plus, DollarSign, Trash2 } from "lucide-react";
 import { savePlan, deletePlan, togglePlanActive } from "@/lib/actions/plans";
 
 export interface Plan {
@@ -185,18 +186,18 @@ export function PlansTableClient({ plans: initialPlans }: PlansTableClientProps)
       key: "actions",
       label: "Ações",
       render: (row: Plan) => (
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={() => openEdit(row)} className="h-8 w-8 p-0">
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+        <div className="flex items-center gap-1">
+          <ActionButton
+            icon={Pencil}
+            tooltip="Editar"
+            onClick={() => openEdit(row)}
+          />
+          <ActionButton
+            icon={Trash2}
+            tooltip="Excluir"
+            variant="destructive"
             onClick={() => setDeletePlanId(row.id)}
-          >
-            Excluir
-          </Button>
+          />
         </div>
       ),
     },
