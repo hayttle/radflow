@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
+import { hasActiveSubscriptionAccess } from "../subscription-access";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -82,11 +83,11 @@ export async function updateSession(request: NextRequest) {
 
       const { data: subscription } = await supabase
         .from("subscriptions")
-        .select("status")
+        .select("status, trial_end")
         .eq("user_id", user.sub)
         .maybeSingle();
 
-      const isActive = subscription?.status === "active" || subscription?.status === "trialing";
+      const isActive = hasActiveSubscriptionAccess(subscription);
 
       if (!isActive) {
         const url = request.nextUrl.clone();

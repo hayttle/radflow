@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { PageContainer } from "@/components/page-container";
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, CreditCard, ExternalLink, Zap } from "lucide-react";
 import { ManageSubscriptionButton } from "@/components/configuracoes/plano/manage-subscription-button";
 import { SubscriptionAlert } from "@/components/configuracoes/plano/subscription-alert";
+import { hasActiveSubscriptionAccess } from "@/lib/subscription-access";
 
 export default async function SubscriptionPage() {
   const supabase = await createClient();
@@ -23,12 +25,16 @@ export default async function SubscriptionPage() {
     .eq("user_id", user.id)
     .single();
 
-  const isActive = subscription?.status === "active" || subscription?.status === "trialing";
+  const isActive = hasActiveSubscriptionAccess(subscription);
+  const showTrialingUi =
+    isActive && subscription?.status === "trialing";
   const plan = subscription?.plans;
 
   return (
     <PageContainer>
-      <SubscriptionAlert />
+      <Suspense fallback={null}>
+        <SubscriptionAlert hasAccess={isActive} />
+      </Suspense>
       <PageHeader
         title="Plano e Faturamento"
         description="Gerencie sua assinatura, visualize faturas e atualize seus métodos de pagamento."
@@ -51,7 +57,7 @@ export default async function SubscriptionPage() {
               </div>
               {isActive ? (
                 <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-none px-4 py-1.5 rounded-full text-xs font-bold shadow-sm">
-                  {subscription.status === 'trialing' ? 'Período de Teste' : 'Assinatura Ativa'}
+                  {showTrialingUi ? "Período de Teste" : "Assinatura Ativa"}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="px-4 py-1.5 rounded-full text-xs font-bold border-2 shadow-sm">
@@ -80,10 +86,18 @@ export default async function SubscriptionPage() {
                 </div>
                 <div className="flex flex-col md:items-end gap-1">
                   <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
-                    {subscription.status === 'trialing' ? 'Expira em' : 'Próxima cobrança'}
+                    {showTrialingUi ? "Expira em" : "Próxima cobrança"}
                   </span>
                   <span className="text-sm font-bold text-foreground">
-                    {new Date(subscription.status === 'trialing' ? subscription.trial_end : subscription.current_period_end).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    {new Date(
+                      showTrialingUi
+                        ? (subscription.trial_end ?? subscription.current_period_end)
+                        : subscription.current_period_end
+                    ).toLocaleDateString("pt-BR", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
                   </span>
                 </div>
               </div>
