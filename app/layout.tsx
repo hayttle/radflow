@@ -11,33 +11,33 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: {
-    default: "RadFlow | Inteligência em Laudos Radiológicos",
+    default: "RadFlow | Automação em Laudos Radiológicos para Clínicas",
     template: "%s | RadFlow"
   },
-  description: "A revolução nos laudos radiológicos. Saia do Word e ganhe produtividade com nossa plataforma automatizada para radiologistas.",
-  keywords: ["radiologia", "laudos", "automação", "produtividade médica", "saúde digital", "clínica de imagem"],
+  description: "A revolução nos laudos radiológicos. Saia do editor de texto e ganhe extrema produtividade com nossa plataforma de automação especializada para radiologistas.",
+  keywords: ["radiologia", "laudos", "automação", "produtividade médica", "saúde digital", "clínica de imagem", "software para laudos", "telerradiologia"],
   authors: [{ name: "RadFlow Team" }],
   creator: "RadFlow",
   openGraph: {
     type: "website",
     locale: "pt_BR",
     url: defaultUrl,
-    title: "RadFlow | Inteligência em Laudos Radiológicos",
-    description: "Transforme seu fluxo de trabalho manual em uma plataforma automatizada e segura. Laudos em minutos, não em horas.",
+    title: "RadFlow | Automação em Laudos Radiológicos para Clínicas",
+    description: "Transforme o fluxo de trabalho da sua clínica. Saia do editor de texto e ganhe extrema produtividade com automação avançada para laudos radiológicos padronizados.",
     siteName: "RadFlow",
     images: [
       {
         url: "/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "RadFlow - Inteligência em Laudos Radiológicos",
+        alt: "RadFlow - Automação Mágica em Laudos Radiológicos",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "RadFlow | Inteligência em Laudos Radiológicos",
-    description: "A revolução nos laudos radiológicos. Ganhe produtividade com nossa plataforma automatizada.",
+    title: "RadFlow | Automação em Laudos Radiológicos",
+    description: "Saia do Microsoft Word e ganhe máxima produtividade com automação especializada para médicos radiologistas.",
     images: ["/twitter-image.png"],
   },
   robots: {
@@ -57,13 +57,44 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "RadFlow",
+        "description": "Plataforma de automação focada em extrema produtividade projetada exclusivamente para radiologistas preencherem laudos mais rapidamente.",
+        "applicationCategory": "MedicalBusinessApplication",
+        "operatingSystem": "WebBrowser",
+        "offers": {
+          "@type": "Offer",
+          "price": "0.00",
+          "priceCurrency": "BRL",
+          "availability": "https://schema.org/InStock"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "RadFlow",
+        "url": defaultUrl,
+        "logo": `${defaultUrl}/opengraph-image.png`
+      }
+    ]
+  };
+
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+        />
+      </head>
       <body className={`${geistSans.className} antialiased`} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
         >
           {children}
           <Toaster

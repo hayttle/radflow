@@ -17,23 +17,8 @@ export function Navbar() {
           </span>
         </Link>
         
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <Link href="/#problema" className="hover:text-primary transition-colors">Problema</Link>
-          <Link href="/#solucao" className="hover:text-primary transition-colors">Solução</Link>
-          <Link href="/#recursos" className="hover:text-primary transition-colors">Recursos</Link>
-          <Link href="/#precos" className="hover:text-primary transition-colors">Preços</Link>
-          <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
-          <Link href="/#faq" className="hover:text-primary transition-colors">FAQ</Link>
-        </div>
-
         <div className="flex items-center gap-4">
           <ThemeSwitcher />
-          <Button variant="ghost" asChild className="hidden sm:inline-flex">
-            <Link href="/auth/login">Entrar</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/auth/sign-up">Começar Agora</Link>
-          </Button>
         </div>
       </div>
     </nav>

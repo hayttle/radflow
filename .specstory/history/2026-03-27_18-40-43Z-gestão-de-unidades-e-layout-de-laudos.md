@@ -13334,3 +13334,123 @@ _**Agent (claude-4.6-sonnet-medium-thinking)**_
 _**Agent (claude-4.6-sonnet-medium-thinking)**_
 
 Pronto — o fundo cinza foi removido. O papel A4 branco agora aparece diretamente sobre o fundo da interface, com apenas a sombra (`box-shadow`) para dar profundidade.
+
+---
+
+_**User**_
+
+@components/laudos/LaudoDocumentPreview.tsx:92-93 nao é pra remover, é para diminuir esse espaco
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<think><details><summary>Thought Process</summary>
+The user wants to keep the gray background but reduce the padding/space within it. The gray space comes from the container being larger than the paper. The paper is centered within the container. 
+
+The space is because `availW - 8` and `availH - 8` leave 4px on each side. But looking at it again, the container itself doesn't have padding - the space is because the paper (scaled) is smaller than the container.
+
+Actually, the issue is that `justify-center items-center` centers the paper in the container, leaving equal space on all sides. If I want less gray space, I need the paper to fill more of the container.
+
+
+The scale calculation subtracts 8px total from the available dimensions, which should make the paper nearly fill the container. But if the container's aspect ratio differs from A4's, the paper will be constrained by whichever dimension is more limiting, leaving gray space on the other sides.
+
+To reduce this gray space while keeping the gray background, I could add a small fixed padding around the container instead of relying on the 8px margin, which would create a consistent border that feels intentional rather than wasteful. I'm realizing the core issue is the aspect ratio mismatch between the A4 paper and the preview column—the paper will always be constrained by whichever dimension hits its limit first, leaving gray space on the other side. I could try adjusting the container sizing or padding, but that just shifts the problem around without actually solving it. The math checks out—the outer container and inner div should be the same size when accounting for the zoom scale, so the gray space must be coming from the parent container being taller than needed.
+
+I'm thinking about adding a small fixed padding to the outer container and adjusting the available width and height calculations to account for it, which would ensure a consistent 8px gray border around the paper. But there's a tension here—when the paper gets constrained by height instead of width, the gray space on the sides would grow beyond that 8px padding.
+
+I'm considering restructuring the layout so the gray container only takes up as much space as it needs rather than filling the entire viewport, maybe using `inline-block` or `inline-flex` with a centering wrapper. The problem is that the container needs stable dimensions for the ResizeObserver to measure available space, so making it shrink-to-fit breaks that measurement system. I need to find a different approach that doesn't sacrifice the ability to track available dimensions.
+
+The cleanest solution is keeping the outer div as a full-height transparent measurement container while applying the gray background and styling only to the inner paper wrapper, which avoids the padding mismatch issue. Building the layout structure...</details></think>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Entendi — o cinza deve ficar como fundo do container, mas o espaço ao redor do papel está grande porque o `bg-gray-300` preenche todo o `h-full` enquanto o papel escalado fica menor. A solução é mover o cinza para um wrapper que abraça exatamente o papel, e o container externo fica transparente só para medir:
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+The string to replace was not found in the file.
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2">
+<details><summary>Tool use: **read_file_v2** • Read file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\laudos\LaudoDocumentPreview.tsx</summary>
+
+</details>
+</tool-use>
+
+<tool-use data-tool-type="read" data-tool-name="read_file_v2"><details>
+<summary>Tool use: **read_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2">
+
+<details><summary>Tool use: **edit_file_v2** • Edit file: c:\Users\haytt\OneDrive\Documentos\Projetos Saas\radflow\components\laudos\LaudoDocumentPreview.tsx</summary>
+
+</details>
+
+</tool-use>
+
+<tool-use data-tool-type="write" data-tool-name="edit_file_v2"><details>
+<summary>Tool use: **edit_file_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Agora o `bg-gray-300` envolve só o papel com 6px de padding fixo em todos os lados — sem aquele excesso de cinza que aparecia quando o container era maior que o papel.
+
+---
+
+_**User**_
+
+deixa, 
+faça o git commit e push
+
+---
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add . && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+fix: reduce preview gray space and tighten A4 paper wrapper in LaudoDocumentPreview
+EOF
+)" && git push</summary>
+
+```bash
+cd "c:/Users/haytt/OneDrive/Documentos/Projetos Saas/radflow" && git add . && git commit --trailer "Made-with: Cursor" -m "$(cat <<'EOF'
+fix: reduce preview gray space and tighten A4 paper wrapper in LaudoDocumentPreview
+EOF
+)" && git push
+```
+
+```
+[master 3e1d8ec] fix: reduce preview gray space and tighten A4 paper wrapper in LaudoDocumentPreview
+ 3 files changed, 443 insertions(+), 61 deletions(-)
+warning: in the working copy of '.specstory/history/2026-03-27_18-40-43Z-gestão-de-unidades-e-layout-de-laudos.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of '.specstory/statistics.json', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/configuracoes/UnitSheet.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'components/laudos/LaudoDocumentPreview.tsx', LF will be replaced by CRLF the next time Git touches it
+To https://github.com/hayttle/radflow.git
+   bbc6bc7..3e1d8ec  master -&gt; master
+
+```
+</details>
+</tool-use>
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"><details>
+<summary>Tool use: **run_terminal_command_v2**</summary>
+
+</details></tool-use>
+
+_**Agent (claude-4.6-sonnet-medium-thinking)**_
+
+Commit `3e1d8ec` enviado com sucesso.
