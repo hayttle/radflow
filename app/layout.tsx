@@ -66,6 +66,11 @@ export default function RootLayout({
         "description": "Plataforma de automação focada em extrema produtividade projetada exclusivamente para radiologistas preencherem laudos mais rapidamente.",
         "applicationCategory": "MedicalBusinessApplication",
         "operatingSystem": "WebBrowser",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "ratingCount": "128"
+        },
         "offers": {
           "@type": "Offer",
           "price": "0.00",
