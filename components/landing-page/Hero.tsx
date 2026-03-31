@@ -32,10 +32,10 @@ export function Hero() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 z-20 relative">
             <Button size="lg" className="h-14 px-8 text-base shadow-xl shadow-green-500/20 bg-[#078836] hover:bg-[#1DA851] text-white flex items-center gap-3 transition-transform hover:scale-105" asChild>
-              <Link href="https://chat.whatsapp.com/Gj59vE5XW8B2f2rHMqW39M" target="_blank" rel="noopener noreferrer">
-                Entrar no Grupo VIP
+              <a href="#cta">
+                Garantir Acesso Antecipado
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </a>
             </Button>
           </div>
         </div>
